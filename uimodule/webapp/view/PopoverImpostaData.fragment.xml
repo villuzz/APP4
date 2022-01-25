@@ -1,0 +1,17 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+	<ResponsivePopover id="myPopoverImpostaData" afterClose="handleAfterClose" placement="Auto" initialFocus="action"
+		title="{i18n>PopoverImpostaDataTitolo}" >
+		<l:VerticalLayout class="sapUiContentPadding" width="100%">
+			<Label text="{i18n>ImpostaDataDa}"/>
+      <DatePicker placeholder="Inserisci giorno" class="sapUiSmallMarginBottom" displayFormat="dd-MM-YYYY" dateValue="{oModelImpostaData>/DataDa}"/>
+			<Label text="{i18n>ImpostaDataA}"/>
+			<DatePicker placeholder="Inserisci giorno" class="sapUiSmallMarginBottom" displayFormat="dd-MM-YYYY" dateValue="{oModelImpostaData>/DataA}"/>
+		</l:VerticalLayout>
+		<beginButton>
+			<Button text="{i18n>Salva}" press="onSalvaImpostaData"/>
+		</beginButton>
+		<endButton>
+			<Button text="{i18n>Cancella}" press="onClosePopoverImpostaData"/>
+		</endButton>
+	</ResponsivePopover>
+</core:FragmentDefinition>
