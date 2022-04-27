@@ -272,7 +272,27 @@ sap.ui.define([
             var oCols = this.byId("tbManutenzione").getColumns().map((c) => {
                 var templ = "";
                 var typ = EdmType.String;
-                var prop = c.mAggregations.header.getText();
+                var prop = c.getCustomData()[0].getValue();
+
+                if (prop === "DataDiRiferimento") {
+                  typ = EdmType.Date;
+                }
+                if (prop === "PeriodoDiSelezioneDa") {
+                  typ = EdmType.Date;
+                }
+                if (prop === "EditData") {
+                  typ = EdmType.Date;
+                }
+                if (prop === "DataUltimaEsecuzione") {
+                  typ = EdmType.Date;
+                }
+                if (prop === "DataPianificazione") {
+                  typ = EdmType.Date;
+                }
+                if (prop === "DataFineCardine") {
+                  typ = EdmType.Date;
+                }
+
                 return {
                     label: c.getHeader().getText(),
                     property: prop,

@@ -1,4 +1,4 @@
-<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:fb="sap.ui.comp.filterbar" xmlns:l="sap.ui.layout" xmlns:ui="sap.ui.table" xmlns:f="sap.f" controllerName="PM030.APP4.controller.ViewPage">
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:fb="sap.ui.comp.filterbar" xmlns:l="sap.ui.layout" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:ui="sap.ui.table" xmlns:f="sap.f" controllerName="PM030.APP4.controller.ViewPage">
     <f:DynamicPage id="dynamicPageId" preserveHeaderStateOnScroll="true" showFooter="false" fitContent="true" class="sapUiContentPadding">
         <f:title>
             <f:DynamicPageTitle>
@@ -175,97 +175,97 @@
         </f:header>
         <f:content>
             <ScrollContainer width="100%" height="100%" vertical="true" horizontal="true">
-                <Table id="tbManutenzione" items="{path: 'mManutenzione>/'}"  mode="SingleSelectLeft" sticky="HeaderToolbar,ColumnHeaders">
-                    <columns>
-                        <Column width="" id="col1"><Text text="{i18n>NumAppuntamenti}"/></Column>
-                        <Column id="col2"><Text text="{i18n>INDEX}"/></Column>
-                        <Column id="col3"><Text text="{i18n>Divisione}"/></Column>                        
-                        <Column id="col4"><Text text="{i18n>Impianto}"/></Column>
-                        <Column id="col5"><Text text="{i18n>TA}"/></Column>
-                        <Column id="col6"><Text text="{i18n>Ordine}"/></Column>
-                        <Column id="col7"><Text text="{i18n>TipoOrdine}"/></Column>
-                        <Column id="col8"><Text text="{i18n>TipoSchedulazione}"/></Column>
-                        <Column id="col9"><Text text="{i18n>Agg}"/></Column>
-                        <Column id="col10"><Text text="{i18n>SedeTecnica}"/></Column>
-                        <Column id="col11"><Text text="{i18n>DescrizioneComponente}"/></Column>
-                        <Column id="col12"><Text text="{i18n>DescrizioneAzionePMO}"/></Column>
-                        <Column id="col13"><Text text="{i18n>DataUltimaEsecuzione}"/></Column>
-                        <Column id="col14"><Text text="{i18n>DataPianificazione}"/></Column>
-                        <Column id="col15"><Text text="{i18n>Delay}"/></Column>
-                        <Column id="col16"><Text text="{i18n>Indisponibilita}"/></Column>
-                        <Column id="col17"><Text text="{i18n>Percorso}"/></Column>
-                        <Column id="col18"><Text text="{i18n>StatoODM}"/></Column>
-                        <Column id="col19"><Text text="{i18n>Equipment}"/></Column>
-                        <Column id="col20"><Text text="{i18n>DataFineCardine}"/></Column>  
-                        <Column id="col21"><Text text="{i18n>Sistema}"/></Column>
-                        <Column id="col22"><Text text="{i18n>Classe}"/></Column>
-                        <Column id="col23"><Text text="{i18n>Azione}"/></Column>
-                        <Column id="col24"><Text text="{i18n>TipoAgg}"/></Column>  
-                        <Column id="col25"><Text text="{i18n>Scostamento}"/></Column> 
-                        <Column id="col26"><Text text="{i18n>Frequenza}"/></Column>
-                        <Column id="col27"><Text text="{i18n>UMFrequenza}"/></Column>  
-                        <Column id="col28"><Text text="{i18n>CDL}"/></Column>
-                        <Column id="col29"><Text text="{i18n>Destinatario}"/></Column> 
-                        <Column id="col30"><Text text="{i18n>TipoGestione}"/></Column> 
-                        <Column id="col31"><Text text="{i18n>Finalita}"/></Column> 
-                        <Column id="col32"><Text text="{i18n>GruppoControlli}"/></Column> 
-                        <Column id="col33"><Text text="{i18n>TipoAttivita}"/></Column>   
-                        <Column id="col34"><Text text="{i18n>LavoroTot}"/></Column> 
-                        <Column id="col35"><Text text="{i18n>FattEse}"/></Column>
-                        <Column id="col36"><Text text="{i18n>NumRis}"/></Column>
-                        <Column id="col37"><Text text="{i18n>DurataStandard}"/></Column> 
-                        <Column id="col38"><Text text="{i18n>Chiave}"/></Column> 
-                        <Column id="col39"><Text text="{i18n>UMLavoro}"/></Column> 
-                        <Column id="col40"><Text text="{i18n>TestoEsteso}"/></Column> 
-                        <Column id="col41"><Text text="{i18n>Documenti}"/></Column>
-                        <Column id="col42"><Text text="{i18n>UtOggTec}"/></Column>
-                        <Column id="col43"><Text text="{i18n>Priorita}"/></Column> 
-                        <Column id="col44"><Text text="{i18n>FlagMateriali}"/></Column> 
-                        <Column id="col45"><Text text="{i18n>FlagPrestazioni}"/></Column>
-                        <Column id="col46"><Text text="{i18n>FlagGestCollective}"/></Column>
-                        <Column id="col47"><Text text="{i18n>Criticita}"/></Column> 
-                        <Column id="col48"><Text text="{i18n>Determinanza}"/></Column>
-                        <Column id="col49"><Text text="{i18n>Differibile}"/></Column>
-                        <Column id="col50"><Text text="{i18n>PuntoDiMisura}"/></Column>
-                        <Column id="col51"><Text text="{i18n>DefPuntoDiMisura}"/></Column>
-                        <Column id="col52"><Text text="{i18n>PosMisura}"/></Column>
-                        <Column id="col53"><Text text="{i18n>NomeCaratteristica}"/></Column>
-                        <Column id="col54"><Text text="{i18n>CentroDiLavoro}"/></Column>
-                        <Column id="col55"><Text text="{i18n>CentroDiLavoro1}"/></Column>
-                        <Column id="col56"><Text text="{i18n>TipoAttività1}"/></Column>
-                        <Column id="col57"><Text text="{i18n>LavoroTotale1}"/></Column>
-                        <Column id="col58"><Text text="{i18n>CentroDiLavoro2}"/></Column>
-                        <Column id="col59"><Text text="{i18n>TipoAttività2}"/></Column>
-                        <Column id="col60"><Text text="{i18n>LavoroTotale2}"/></Column>
-                        <Column id="col61"><Text text="{i18n>CentroDiLavoro3}"/></Column>
-                        <Column id="col62"><Text text="{i18n>TipoAttività3}"/></Column>
-                        <Column id="col63"><Text text="{i18n>LavoroTotale3}"/></Column>
-                        <Column id="col64"><Text text="{i18n>CentroDiLavoro4}"/></Column>
-                        <Column id="col65"><Text text="{i18n>TipoAttività4}"/></Column>
-                        <Column id="col66"><Text text="{i18n>LavoroTotale4}"/></Column>
-                        <Column id="col67"><Text text="{i18n>CentroDiLavoro5}"/></Column>
-                        <Column id="col68"><Text text="{i18n>TipoAttività5}"/></Column>
-                        <Column id="col69"><Text text="{i18n>LavoroTotale5}"/></Column>
-                        <Column id="col70"><Text text="{i18n>FattoreDiEsecuzione1}"/></Column>
-                        <Column id="col71"><Text text="{i18n>NumeroRisorse1}"/></Column>
-                        <Column id="col72"><Text text="{i18n>DurataStandard1}"/></Column>
-                        <Column id="col73"><Text text="{i18n>FattoreDiEsecuzione2}"/></Column>
-                        <Column id="col74"><Text text="{i18n>NumeroRisorse2}"/></Column>
-                        <Column id="col75"><Text text="{i18n>DurataStandard2}"/></Column>
-                        <Column id="col76"><Text text="{i18n>FattoreDiEsecuzione3}"/></Column>
-                        <Column id="col77"><Text text="{i18n>NumeroRisorse3}"/></Column>
-                        <Column id="col78"><Text text="{i18n>DurataStandard3}"/></Column>
-                        <Column id="col79"><Text text="{i18n>FattoreDiEsecuzione4}"/></Column>
-                        <Column id="col80"><Text text="{i18n>NumeroRisorse4}"/></Column>
-                        <Column id="col81"><Text text="{i18n>DurataStandard4}"/></Column>
-                        <Column id="col82"><Text text="{i18n>FattoreDiEsecuzione5}"/></Column>
-                        <Column id="col83"><Text text="{i18n>NumeroRisorse5}"/></Column>
-                        <Column id="col84"><Text text="{i18n>DurataStandard5}"/></Column>
-                        <Column id="col85"><Text text="{i18n>Chiave1}"/></Column>
-                        <Column id="col86"><Text text="{i18n>Chiave2}"/></Column>
-                        <Column id="col87"><Text text="{i18n>Chiave3}"/></Column>
-                        <Column id="col88"><Text text="{i18n>Chiave4}"/></Column>
-                        <Column id="col89"><Text text="{i18n>Chiave5}"/></Column>
+                <Table id="tbManutenzione" items="{path: 'mManutenzione>/'}"  mode="MultiSelect" sticky="HeaderToolbar,ColumnHeaders">
+                  <columns>
+                        <Column width="10em" id="col1" app:property="NumAppuntamenti"><Text text="{i18n>NumAppuntamenti}"/></Column>
+                        <Column width="10em" id="col2" app:property="INDEX"><Text text="{i18n>INDEX}"/></Column>
+                        <Column width="10em" id="col3" app:property="Divisione"><Text text="{i18n>Divisione}"/></Column>                        
+                        <Column width="10em" id="col4" app:property="Impianto"><Text text="{i18n>Impianto}"/></Column>
+                        <Column width="10em" id="col5" app:property="TA"><Text text="{i18n>TA}"/></Column>
+                        <Column width="10em" id="col6" app:property="Ordine"><Text text="{i18n>Ordine}"/></Column>
+                        <Column width="10em" id="col7" app:property="TipoOrdine"><Text text="{i18n>TipoOrdine}"/></Column>
+                        <Column width="10em" id="col8" app:property="TipoSchedulazione"><Text text="{i18n>TipoSchedulazione}"/></Column>
+                        <Column width="10em" id="col9" app:property="Agg"><Text text="{i18n>Agg}"/></Column>
+                        <Column width="10em" id="col10" app:property="SedeTecnica"><Text text="{i18n>SedeTecnica}"/></Column>
+                        <Column width="10em" id="col11" app:property="DescrizioneComponente"><Text text="{i18n>DescrizioneComponente}"/></Column>
+                        <Column width="10em" id="col12" app:property="DescrizioneAzionePMO"><Text text="{i18n>DescrizioneAzionePMO}"/></Column>
+                        <Column width="10em" id="col13" app:property="DataUltimaEsecuzione"><Text text="{i18n>DataUltimaEsecuzione}"/></Column>
+                        <Column width="10em" id="col14" app:property="DataPianificazione"><Text text="{i18n>DataPianificazione}"/></Column>
+                        <Column width="10em" id="col15" app:property="Ritardo"><Text text="{i18n>Ritardo}"/></Column>
+                        <Column width="10em" id="col16" app:property="Indisponibilita"><Text text="{i18n>Indisponibilita}"/></Column>
+                        <Column width="10em" id="col17" app:property="Percorso"><Text text="{i18n>Percorso}"/></Column>
+                        <Column width="10em" id="col18" app:property="StatoODM"><Text text="{i18n>StatoODM}"/></Column>
+                        <Column width="10em" id="col19" app:property="Equipment"><Text text="{i18n>Equipment}"/></Column>
+                        <Column width="10em" id="col20" app:property="DataFineCardine"><Text text="{i18n>DataFineCardine}"/></Column>  
+                        <Column width="10em" id="col21" app:property="Sistema"><Text text="{i18n>Sistema}"/></Column>
+                        <Column width="10em" id="col22" app:property="Classe"><Text text="{i18n>Classe}"/></Column>
+                        <Column width="10em" id="col23" app:property="Azione"><Text text="{i18n>Azione}"/></Column>
+                        <Column width="10em" id="col24" app:property="TipoAgg"><Text text="{i18n>TipoAgg}"/></Column>  
+                        <Column width="10em" id="col25" app:property="Scostamento"><Text text="{i18n>Scostamento}"/></Column> 
+                        <Column width="10em" id="col26" app:property="Frequenza"><Text text="{i18n>Frequenza}"/></Column>
+                        <Column width="10em" id="col27" app:property="UMFrequenza"><Text text="{i18n>UMFrequenza}"/></Column>  
+                        <Column width="10em" id="col28" app:property="CDL"><Text text="{i18n>CDL}"/></Column>
+                        <Column width="10em" id="col29" app:property="Destinatario"><Text text="{i18n>Destinatario}"/></Column> 
+                        <Column width="10em" id="col30" app:property="TipoGestione"><Text text="{i18n>TipoGestione}"/></Column> 
+                        <Column width="10em" id="col31" app:property="Finalita"><Text text="{i18n>Finalita}"/></Column> 
+                        <Column width="10em" id="col32" app:property="GruppoControlli"><Text text="{i18n>GruppoControlli}"/></Column> 
+                        <Column width="10em" id="col33" app:property="TipoAttivita"><Text text="{i18n>TipoAttivita}"/></Column>   
+                        <Column width="10em" id="col34" app:property="LavoroTot"><Text text="{i18n>LavoroTot}"/></Column> 
+                        <Column width="10em" id="col35" app:property="FattEse"><Text text="{i18n>FattEse}"/></Column>
+                        <Column width="10em" id="col36" app:property="NumRis"><Text text="{i18n>NumRis}"/></Column>
+                        <Column width="10em" id="col37" app:property="DurataStandard"><Text text="{i18n>DurataStandard}"/></Column> 
+                        <Column width="10em" id="col38" app:property="Chiave"><Text text="{i18n>Chiave}"/></Column> 
+                        <Column width="10em" id="col39" app:property="UMLavoro"><Text text="{i18n>UMLavoro}"/></Column> 
+                        <Column width="10em" id="col40" app:property="TestoEsteso"><Text text="{i18n>TestoEsteso}"/></Column> 
+                        <Column width="10em" id="col41" app:property="Documenti"><Text text="{i18n>Documenti}"/></Column>
+                        <Column width="10em" id="col42" app:property="UtOggTec"><Text text="{i18n>UtOggTec}"/></Column>
+                        <Column width="10em" id="col43" app:property="Priorita"><Text text="{i18n>Priorita}"/></Column> 
+                        <Column width="10em" id="col44" app:property="FlagMateriali"><Text text="{i18n>FlagMateriali}"/></Column> 
+                        <Column width="10em" id="col45" app:property="FlagPrestazioni"><Text text="{i18n>FlagPrestazioni}"/></Column>
+                        <Column width="10em" id="col46" app:property="FlagGestCollective"><Text text="{i18n>FlagGestCollective}"/></Column>
+                        <Column width="10em" id="col47" app:property="Criticita"><Text text="{i18n>Criticita}"/></Column> 
+                        <Column width="10em" id="col48" app:property="Determinanza"><Text text="{i18n>Determinanza}"/></Column>
+                        <Column width="10em" id="col49" app:property="Differibile"><Text text="{i18n>Differibile}"/></Column>
+                        <Column width="10em" id="col50" app:property="PuntoDiMisura"><Text text="{i18n>PuntoDiMisura}"/></Column>
+                        <Column width="10em" id="col51" app:property="DefPuntoDiMisura"><Text text="{i18n>DefPuntoDiMisura}"/></Column>
+                        <Column width="10em" id="col52" app:property="PosMisura"><Text text="{i18n>PosMisura}"/></Column>
+                        <Column width="10em" id="col53" app:property="NomeCaratteristica"><Text text="{i18n>NomeCaratteristica}"/></Column>
+                        <Column width="10em" id="col54" app:property="CentroDiLavoro"><Text text="{i18n>CentroDiLavoro}"/></Column>
+                        <Column width="10em" id="col55" app:property="CentroDiLavoro1"><Text text="{i18n>CentroDiLavoro1}"/></Column>
+                        <Column width="10em" id="col56" app:property="TipoAttività1"><Text text="{i18n>TipoAttività1}"/></Column>
+                        <Column width="10em" id="col57" app:property="LavoroTotale1"><Text text="{i18n>LavoroTotale1}"/></Column>
+                        <Column width="10em" id="col58" app:property="CentroDiLavoro2"><Text text="{i18n>CentroDiLavoro2}"/></Column>
+                        <Column width="10em" id="col59" app:property="TipoAttività2"><Text text="{i18n>TipoAttività2}"/></Column>
+                        <Column width="10em" id="col60" app:property="LavoroTotale2"><Text text="{i18n>LavoroTotale2}"/></Column>
+                        <Column width="10em" id="col61" app:property="CentroDiLavoro3"><Text text="{i18n>CentroDiLavoro3}"/></Column>
+                        <Column width="10em" id="col62" app:property="TipoAttività3"><Text text="{i18n>TipoAttività3}"/></Column>
+                        <Column width="10em" id="col63" app:property="LavoroTotale3"><Text text="{i18n>LavoroTotale3}"/></Column>
+                        <Column width="10em" id="col64" app:property="CentroDiLavoro4"><Text text="{i18n>CentroDiLavoro4}"/></Column>
+                        <Column width="10em" id="col65" app:property="TipoAttività4"><Text text="{i18n>TipoAttività4}"/></Column>
+                        <Column width="10em" id="col66" app:property="LavoroTotale4"><Text text="{i18n>LavoroTotale4}"/></Column>
+                        <Column width="10em" id="col67" app:property="CentroDiLavoro5"><Text text="{i18n>CentroDiLavoro5}"/></Column>
+                        <Column width="10em" id="col68" app:property="TipoAttività5"><Text text="{i18n>TipoAttività5}"/></Column>
+                        <Column width="10em" id="col69" app:property="LavoroTotale5"><Text text="{i18n>LavoroTotale5}"/></Column>
+                        <Column width="10em" id="col70" app:property="FattoreDiEsecuzione1"><Text text="{i18n>FattoreDiEsecuzione1}"/></Column>
+                        <Column width="10em" id="col71" app:property="NumeroRisorse1"><Text text="{i18n>NumeroRisorse1}"/></Column>
+                        <Column width="10em" id="col72" app:property="DurataStandard1"><Text text="{i18n>DurataStandard1}"/></Column>
+                        <Column width="10em" id="col73" app:property="FattoreDiEsecuzione2"><Text text="{i18n>FattoreDiEsecuzione2}"/></Column>
+                        <Column width="10em" id="col74" app:property="NumeroRisorse2"><Text text="{i18n>NumeroRisorse2}"/></Column>
+                        <Column width="10em" id="col75" app:property="DurataStandard2"><Text text="{i18n>DurataStandard2}"/></Column>
+                        <Column width="10em" id="col76" app:property="FattoreDiEsecuzione3"><Text text="{i18n>FattoreDiEsecuzione3}"/></Column>
+                        <Column width="10em" id="col77" app:property="NumeroRisorse3"><Text text="{i18n>NumeroRisorse3}"/></Column>
+                        <Column width="10em" id="col78" app:property="DurataStandard3"><Text text="{i18n>DurataStandard3}"/></Column>
+                        <Column width="10em" id="col79" app:property="FattoreDiEsecuzione4"><Text text="{i18n>FattoreDiEsecuzione4}"/></Column>
+                        <Column width="10em" id="col80" app:property="NumeroRisorse4"><Text text="{i18n>NumeroRisorse4}"/></Column>
+                        <Column width="10em" id="col81" app:property="DurataStandard4"><Text text="{i18n>DurataStandard4}"/></Column>
+                        <Column width="10em" id="col82" app:property="FattoreDiEsecuzione5"><Text text="{i18n>FattoreDiEsecuzione5}"/></Column>
+                        <Column width="10em" id="col83" app:property="NumeroRisorse5"><Text text="{i18n>NumeroRisorse5}"/></Column>
+                        <Column width="10em" id="col84" app:property="DurataStandard5"><Text text="{i18n>DurataStandard5}"/></Column>
+                        <Column width="10em" id="col85" app:property="Chiave1"><Text text="{i18n>Chiave1}"/></Column>
+                        <Column width="10em" id="col86" app:property="Chiave2"><Text text="{i18n>Chiave2}"/></Column>
+                        <Column width="10em" id="col87" app:property="Chiave3"><Text text="{i18n>Chiave3}"/></Column>
+                        <Column width="10em" id="col88" app:property="Chiave4"><Text text="{i18n>Chiave4}"/></Column>
+                        <Column width="10em" id="col89" app:property="Chiave5"><Text text="{i18n>Chiave5}"/></Column>
                     </columns>
                     <items>
                         <ColumnListItem vAlign="Middle" type="Active" press="onPressLine">
@@ -282,14 +282,26 @@
                                 <Text text="{mManutenzione>SedeTecnica}"/>
                                 <Text text="{mManutenzione>DescrizioneComponente}"/>
                                 <Text text="{mManutenzione>DescrizioneAzionePMO}"/>
-                                <Text text="{mManutenzione>DataUltimaEsecuzione}"/>
-                                <Text text="{mManutenzione>DataPianificazione}"/>
-                                <Text text="{mManutenzione>Delay}"/>
+                                <Text text="{path: 'mManutenzione>DataUltimaEsecuzione',
+                                            type: 'sap.ui.model.type.Date',
+                                            formatOptions: {
+                                            pattern: 'dd/MM/yyyy'
+                                            }}"/>
+                                <Text text="{path: 'mManutenzione>DataPianificazione',
+                                            type: 'sap.ui.model.type.Date',
+                                            formatOptions: {
+                                            pattern: 'dd/MM/yyyy'
+                                            }}"/>
+                                <Text text="{mManutenzione>Ritardo}"/>
                                 <Text text="{mManutenzione>Indisponibilita}"/>
                                 <Text text="{mManutenzione>Percorso}"/>
                                 <Text text="{mManutenzione>StatoODM}"/>
                                 <Text text="{mManutenzione>Equipment}"/>
-                                <Text text="{mManutenzione>DataFineCardine}"/>
+                                <Text text="{path: 'mManutenzione>DataFineCardine',
+                                            type: 'sap.ui.model.type.Date',
+                                            formatOptions: {
+                                            pattern: 'dd/MM/yyyy'
+                                            }}"/>
                                 <Text text="{mManutenzione>Sistema}"/>
                                 <Text text="{mManutenzione>Classe}"/>
                                 <Text text="{mManutenzione>Azione}"/>
@@ -359,7 +371,6 @@
                                 <Text text="{mManutenzione>Chiave3}"/>
                                 <Text text="{mManutenzione>Chiave4}"/>
                                 <Text text="{mManutenzione>Chiave5}"/>
-
                             </cells>
                         </ColumnListItem>
                     </items>

@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
               {
                 id: "Manutenzione-tbManutenzione-col15",
                 order: 114,
-                text: oResource.getText("Delay"),
+                text: oResource.getText("Ritardo"),
                 visible: true
               },
               {
