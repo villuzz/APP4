@@ -8,7 +8,9 @@ sap.ui.define([
     "sap/ui/core/Fragment",
     "sap/ui/export/Spreadsheet",
     "sap/ui/export/library",
-], function (Controller, JSONModel, MessageBox, manutenzioneTable, TablePersoController, Popup, Fragment, Spreadsheet, exportLibrary,) {
+    'sap/ui/model/Filter',
+    'sap/ui/model/FilterOperator',
+], function (Controller, JSONModel, MessageBox, manutenzioneTable, TablePersoController, Popup, Fragment, Spreadsheet, exportLibrary, Filter, FilterOperator) {
     "use strict";
     var oResource;
     oResource = new sap.ui.model.resource.ResourceModel({bundleName: "PM030.APP4.i18n.i18n"}).getResourceBundle();
@@ -16,132 +18,180 @@ sap.ui.define([
 
     return Controller.extend("PM030.APP4.controller.ViewPage", {
         onInit: function () {
-            debugger;
-            // leggere i modelli che ci servono
-            var sPiani = [
-                {
-                    Divisione: "123",
-                    Ritardo: "64"
-                }, {
-                    Divisione: "23",
-                    Ritardo: "76"
-                },
-            ];
-            var oManutenzione = new sap.ui.model.json.JSONModel();
-            oManutenzione.setData(sPiani);
-            this.getView().setModel(oManutenzione, "mManutenzione");
-
             this.getOwnerComponent().getRouter().getRoute("ViewPage").attachPatternMatched(this._onObjectMatched, this);
-
         },
-        _onObjectMatched: function () {
-            var oModel = new sap.ui.model.json.JSONModel();
-            oModel.setData({
+        _onObjectMatched: async function () {
+          sap.ui.core.BusyIndicator.show();
+            var oModel1 = new sap.ui.model.json.JSONModel();
+            oModel1.setData({
                 DataDiRiferimento: new Date(),
-                PeriodoDiSelezioneDa: new Date(new Date().getFullYear(), 0, 1),
+                PeriodoDiSelezioneDa: new Date(new Date().getFullYear(), "00", "01"),
                 PeriodoDiSelezioneA: new Date(new Date().getFullYear(), 11, 31)
             });
-            this.getView().setModel(oModel, "FilterModel");
+            this.getView().setModel(oModel1, "sFilter");
 
             this._mViewSettingsDialogs = {};
             this._oTPC = new TablePersoController({table: this.byId("tbManutenzione"), componentName: "Piani", persoService: manutenzioneTable}).activate();
+
+            if (this.getView().getModel("sHelp") === undefined) {
+              await this.getValueHelp(); // PER QUELLI PICCOLI VA BENE, PER GLI ALTRI CHIAMARE SOLO AL BISOGNO TODO
+          }
+          sap.ui.core.BusyIndicator.hide(0);
         },
-        onSearchResult: function (oEvent) {
-            debugger;
-            var oModel = this.getView().getModel("FilterModel");
+        getValueHelp: async function () {
+          var sData = {};
+          var oModelHelp = new sap.ui.model.json.JSONModel();
+
+          sData.TIPO_ORDINE = await this.Shpl("T003O", "CH");
+          sData.DIVISIONE = await this.Shpl("H_T001W", "SH");
+          sData.TIPO_GESTIONE = await this._getTableNoError("/T_TP_MAN");
+          sData.TIPO_GESTIONE_1 = await this._getTableNoError("/T_TP_MAN1");
+          sData.TIPO_GESTIONE_2 = await this._getTableNoError("/T_TP_MAN2");
+          sData.CENTRO_LAVORO = await this._getTableNoError("/T_DEST");
+          sData.TIPO_ATTIVITA = await this.Shpl("T353I", "CH");
+          sData.SISTEMA = await this._getTableNoError("/T_ACT_SYST");
+          sData.CLASSE = await this._getTableNoError("/T_ACT_CL");
+
+          oModelHelp.setData(sData);
+          this.getView().setModel(oModelHelp, "sHelp");
+        },
+        Shpl: async function (ShplName, ShplType) {
+          var aFilter = [];
+          aFilter.push(new Filter("ShplName", FilterOperator.EQ, ShplName));
+          aFilter.push(new Filter("ShplType", FilterOperator.EQ, ShplType));
+
+          var result = await this._getTableNoError("/dySearch", aFilter);
+          if (result[0] !== undefined) {
+              if (result[0].ReturnFieldValueSet) {
+                  result = result[0].ReturnFieldValueSet.results;
+                  result.splice(0, 1);
+              } else {
+                  result = [];
+              }
+          } else {
+              result = [];
+          }
+          return result;
+      },
+        onSearchResult: function () {
+            var oModel = this.getView().getModel("sFilter");
             var divisione = oModel.getData().Divisione;
-            if (! divisione) {
-                MessageBox.error(oResource.getText("MessageDivisioneObbligatoria"))
+            if (!divisione) {
+                MessageBox.error(oResource.getText("MessageDivisioneObbligatoria"));
             } else {
                 this.onSearchFilters();
             }
         },
-        onSearchFilters: function () {
-            var model = this.getModel("FilterModel");
-            var oData = model.getData();
+        onSearchFilters: async function () {
+          sap.ui.core.BusyIndicator.show();
+            var oData = this.getModel("sFilter").getData();
 
-            var oBinding = this.byId("tbManutenzione").getBinding("items");
-            if (oBinding.isSuspended()) {
-                oBinding.resume();
+            var sFilter = {
+              Odm: [{}],
+              PDat1: "",
+              PDat2: "",
+              PDat3: "",
+              FlagAttivo: "X",
+           /*   Collective: "",
+              RiskAnalysis: "",
+            
+              SDivisioneu: [],
+              SAzione: [],  
+              SCentroLavoro: [],
+              SClasse: [],
+              SDesComponente: [],
+              SDestinatario: [],
+              SEquipmentCompo: [],
+              SIndexPmo: [],
+              SIndisponibilita: [],
+              SPercorso: [],
+              SPltxu: [], //impianto
+              SProgres: [],
+              SSistema: [],
+              SStrno: [], //sedeTecnica
+              //STipoAttivita: [],
+              STipoGestione: [],
+              STipoGestione1: [],
+              STipoGestione2: [],
+              STipoOrdine: [],
+              STipoPmo: [] //Tipo Schedulazione*/
+              };
+
+              sFilter.PDat1 = oData.DataDiRiferimento;
+              sFilter.PDat2 = oData.PeriodoDiSelezioneDa;
+              sFilter.PDat3 = oData.PeriodoDiSelezioneA;
+
+            if (oData.Divisione !== undefined && oData.Divisione !== ""){
+              sFilter.SDivisioneu = [{ Sign: "I", Option: "EQ", Low: oData.Divisione, High: "" }];
+            }
+            if (oData.Index !== undefined && oData.Index !== ""){
+              sFilter.SIndexPmo = [{ Sign: "I", Option: "EQ", Low: oData.SIndexPmo, High: "" }];
+            }
+            if (oData.TipoSchedulazione !== undefined && oData.TipoSchedulazione !== ""){
+              sFilter.STipoPmo = [{ Sign: "I", Option: "EQ", Low: oData.TipoSchedulazione, High: "" }];
+            }
+            if (oData.TipoOrdine !== undefined && oData.TipoOrdine !== ""){
+              sFilter.STipoOrdine = [{ Sign: "I", Option: "EQ", Low: oData.TipoOrdine, High: "" }];
+            }
+            /*if (oData.TipoAttivita !== undefined && oData.TipoAttivita !== ""){
+              sFilter.STipoAttivita = [{ Sign: "I", Option: "EQ", Low: oData.TipoAttivita, High: "" }];
+            }*/
+            if (oData.Indisponibilita !== undefined && oData.Indisponibilita !== ""){
+              sFilter.SIndisponibilita = [{ Sign: "I", Option: "EQ", Low: oData.Indisponibilita, High: "" }];
+            }
+            if (oData.Sistema !== undefined && oData.Sistema !== ""){
+              sFilter.SSistema = [{ Sign: "I", Option: "EQ", Low: oData.Sistema, High: "" }];
+            }
+            if (oData.Azione !== undefined && oData.Azione !== ""){
+              sFilter.SAzione = [{ Sign: "I", Option: "EQ", Low: oData.Azione, High: "" }];
+            }
+            if (oData.Classe !== undefined && oData.Classe !== ""){
+              sFilter.SClasse = [{ Sign: "I", Option: "EQ", Low: oData.Classe, High: "" }];
+            }
+            if (oData.Impianto !== undefined && oData.Impianto !== ""){
+              sFilter.SPltxu = [{ Sign: "I", Option: "EQ", Low: oData.Impianto, High: "" }];
+            }
+            if (oData.sedeTecnicaComponente !== undefined && oData.sedeTecnicaComponente !== ""){
+              sFilter.SStrno = [{ Sign: "I", Option: "EQ", Low: oData.sedeTecnicaComponente, High: "" }];
+            }
+            if (oData.ComponenteEquipment !== undefined && oData.ComponenteEquipment !== ""){
+              sFilter.SEquipmentCompo = [{ Sign: "I", Option: "EQ", Low: oData.ComponenteEquipment, High: "" }];
+            }
+            if (oData.DescrizioneComponente !== undefined && oData.DescrizioneComponente !== ""){
+              sFilter.SDesComponente = [{ Sign: "I", Option: "EQ", Low: oData.DescrizioneComponente, High: "" }];
+            }
+            if (oData.CentroDiLavoro !== undefined && oData.CentroDiLavoro !== ""){
+              sFilter.SCentroLavoro = [{ Sign: "I", Option: "EQ", Low: oData.CentroDiLavoro, High: "" }];
+            }
+            if (oData.Destinatario !== undefined && oData.Destinatario !== ""){
+              sFilter.SDestinatario = [{ Sign: "I", Option: "EQ", Low: oData.Destinatario, High: "" }];
+            }
+            if (oData.Percorso !== undefined && oData.Percorso !== ""){
+              sFilter.SPercorso = [{ Sign: "I", Option: "EQ", Low: oData.Percorso, High: "" }];
+            }
+            if (oData.TipoGestione !== undefined && oData.TipoGestione !== ""){
+              sFilter.STipoGestione = [{ Sign: "I", Option: "EQ", Low: oData.TipoGestione, High: "" }];
+            }
+            if (oData.Finalita !== undefined && oData.Finalita !== ""){
+              sFilter.STipoGestione1 = [{ Sign: "I", Option: "EQ", Low: oData.Finalita, High: "" }];
+            }
+            if (oData.GrupControllo !== undefined && oData.GrupControllo !== ""){
+              sFilter.STipoGestione2 = [{ Sign: "I", Option: "EQ", Low: oData.GrupControllo, High: "" }];
+            }
+            if (oData.Collective !== undefined && oData.Collective !== ""){
+              sFilter.Collective = oData.Collective;
             }
 
-            var filterArray = [
-                new sap.ui.model.Filter("DataDiRiferimento", sap.ui.model.FilterOperator.EQ, oData.DataDiRiferimento),
-                new sap.ui.model.Filter("PeriodoDiSelezioneDa", sap.ui.model.FilterOperator.EQ, oData.PeriodoDiSelezioneDa),
-                filterArray.push(new sap.ui.model.Filter("PeriodoDiSelezioneA", sap.ui.model.FilterOperator.EQ, oData.PeriodoDiSelezioneDa)),
-            ];
-            oData.Divisione.map((d) => {
-                filterArray.push(new sap.ui.model.Filter("Divisione", sap.ui.model.FilterOperator.EQ, d));
-            });
-            oData.Index.map((i) => {
-                filterArray.push(new sap.ui.model.Filter("Index", sap.ui.model.FilterOperator.EQ, i));
-            });
-            oData.TipoSchedulazione.map((ts) => {
-                filterArray.push(new sap.ui.model.Filter("TipoSchedulazione", sap.ui.model.FilterOperator.EQ, ts));
-            });
-            oData.TipoOrdine.map((to) => {
-                filterArray.push(new sap.ui.model.Filter("TipoOrdine", sap.ui.model.FilterOperator.EQ, to));
-            });
-            oData.TipoAttivita.map((ta) => {
-                filterArray.push(new sap.ui.model.Filter("TipoAttivita", sap.ui.model.FilterOperator.EQ, ta));
-            });
-            oData.Indisponibilita.map((ind) => {
-                filterArray.push(new sap.ui.model.Filter("Indisponibilita", sap.ui.model.FilterOperator.EQ, ind));
-            });
-            oData.Divisione.map((sis) => {
-                filterArray.push(new sap.ui.model.Filter("Sistema", sap.ui.model.FilterOperator.EQ, sis));
-            });
-            oData.Azione.map((az) => {
-                filterArray.push(new sap.ui.model.Filter("Azione", sap.ui.model.FilterOperator.EQ, az));
-            });
-            oData.Classe.map((clas) => {
-                filterArray.push(new sap.ui.model.Filter("Classe", sap.ui.model.FilterOperator.EQ, clas));
-            });
-            oData.Divisione.map((im) => {
-                filterArray.push(new sap.ui.model.Filter("Impianto", sap.ui.model.FilterOperator.EQ, im));
-            });
-            oData.Divisione.map((stc) => {
-                filterArray.push(new sap.ui.model.Filter("SedeTecnicaComponente", sap.ui.model.FilterOperator.EQ, stc));
-            });
-            oData.ComponenteEquipment.map((ce) => {
-                filterArray.push(new sap.ui.model.Filter("ComponenteEquipment", sap.ui.model.FilterOperator.EQ, ce));
-            });
-            oData.DescrizioneComponente.map((dc) => {
-                filterArray.push(new sap.ui.model.Filter("DescrizioneComponente", sap.ui.model.FilterOperator.EQ, dc));
-            });
-            oData.CentroDiLavoro.map((cdl) => {
-                filterArray.push(new sap.ui.model.Filter("CentroDiLavoro", sap.ui.model.FilterOperator.EQ, cdl));
-            });
-            oData.Destinatario.map((dest) => {
-                filterArray.push(new sap.ui.model.Filter("Destinatario", sap.ui.model.FilterOperator.EQ, dest));
-            });
-            oData.Percorso.map((p) => {
-                filterArray.push(new sap.ui.model.Filter("Percorso", sap.ui.model.FilterOperator.EQ, p));
-            });
-            oData.TipoGestione.map((tg) => {
-                filterArray.push(new sap.ui.model.Filter("TipoGestione", sap.ui.model.FilterOperator.EQ, tg));
-            });
-            oData.Finalita.map((f) => {
-                filterArray.push(new sap.ui.model.Filter("Finalita", sap.ui.model.FilterOperator.EQ, f));
-            });
-            oData.GrupControllo.map((gp) => {
-                filterArray.push(new sap.ui.model.Filter("GrupControllo", sap.ui.model.FilterOperator.EQ, gp));
-            });
-            oData.Collective.map((col) => {
-                filterArray.push(new sap.ui.model.Filter("Collective", sap.ui.model.FilterOperator.EQ, col));
-            });
+            var oModel = new sap.ui.model.json.JSONModel(),
+                allIndex = [];
 
-            var self = this;
-            var oDataModel = self.getModel();
-
-            oDataModel.read("", {
-                filters: filterArray,
-                success: function (response) { // debugger;
-
-                },
-                error: function () { // debugger;
-                }
-            });
+            //In realtà fa una read, andava richiamato il metodo Post
+            allIndex = await this._saveHana("/GetODM", sFilter);
+            allIndex = allIndex.Odm.results;
+            debugger
+            oModel.setData(allIndex);
+            this.getView().setModel(oModel, "mManutenzione");
+            sap.ui.core.BusyIndicator.hide();
         },
 
         onImpostaData: function (oEvent) {
@@ -274,22 +324,19 @@ sap.ui.define([
                 var typ = EdmType.String;
                 var prop = c.getCustomData()[0].getValue();
 
-                if (prop === "DataDiRiferimento") {
+                if (prop === "UltimaEsecuz") {
                   typ = EdmType.Date;
                 }
-                if (prop === "PeriodoDiSelezioneDa") {
+                if (prop === "Datpia") {
                   typ = EdmType.Date;
                 }
-                if (prop === "EditData") {
+                if (prop === "FineCard") {
                   typ = EdmType.Date;
                 }
-                if (prop === "DataUltimaEsecuzione") {
+                if (prop === "InizioVal") {
                   typ = EdmType.Date;
                 }
-                if (prop === "DataPianificazione") {
-                  typ = EdmType.Date;
-                }
-                if (prop === "DataFineCardine") {
+                if (prop === "FineVal") {
                   typ = EdmType.Date;
                 }
 
