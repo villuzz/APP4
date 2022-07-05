@@ -78,6 +78,25 @@ sap.ui.define([
               );
           }
       },
+      Shpl: async function (ShplName, ShplType, aFilter) {
+
+        var sFilter = {
+            "ReturnFieldValueSet": [{}]
+        };
+        sFilter.ShplType = ShplType;
+        sFilter.ShplName = ShplName;
+        sFilter.IFilterDataSet = aFilter;
+        // Shlpname Shlpfield Sign Option Low
+
+        var result = await this._saveHana("/dySearch", sFilter);
+        if (result.ReturnFieldValueSet !== undefined) {
+            result = result.ReturnFieldValueSet.results;
+        } else {
+            result = [];
+        }
+
+        return result;
+    },
       _saveHana: function (URL, sData) {
           var xsoDataModelReport = this.getView().getModel();
           return new Promise(function (resolve, reject) {

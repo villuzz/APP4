@@ -62,6 +62,20 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
           return false;
         }
       },
+      formatX: function (Attivo) {
+        if (Attivo === "X"){
+          return "sap-icon://accept";
+        } else {
+          return "sap-icon://decline";
+        }
+      },
+      formatColor: function (Attivo) {
+        if (Attivo === "X"){
+          return "#00CC00";
+        } else {
+          return "#ff0000";
+        }
+      },
         existAzioni: function (sAzione) {
             if (sAzione.length === 0){
               return false;

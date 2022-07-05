@@ -2,10 +2,10 @@
 	<ResponsivePopover id="myPopoverImpostaData" afterClose="handleAfterClose" placement="Auto" initialFocus="action"
 		title="{i18n>PopoverImpostaDataTitolo}" >
 		<l:VerticalLayout class="sapUiContentPadding" width="100%">
-			<Label text="{i18n>ImpostaDataDa}"/>
-      <DatePicker placeholder="Inserisci giorno" class="sapUiSmallMarginBottom" displayFormat="dd-MM-YYYY" dateValue="{oModelImpostaData>/DataDa}"/>
-			<Label text="{i18n>ImpostaDataA}"/>
-			<DatePicker placeholder="Inserisci giorno" class="sapUiSmallMarginBottom" displayFormat="dd-MM-YYYY" dateValue="{oModelImpostaData>/DataA}"/>
+			<Label text="{i18n>DataPianificazione}"/>
+      <DatePicker placeholder="Inserisci giorno" class="sapUiSmallMarginBottom" displayFormat="dd-MM-YYYY" dateValue="{oModelImpostaData>/DataPian}"/>
+			<Label text="{i18n>Datafinecardine}"/>
+			<DatePicker placeholder="Inserisci giorno" class="sapUiSmallMarginBottom" displayFormat="dd-MM-YYYY" dateValue="{oModelImpostaData>/FineCard}"/>
 		</l:VerticalLayout>
 		<beginButton>
 			<Button text="{i18n>Salva}" press="onSalvaImpostaData"/>
