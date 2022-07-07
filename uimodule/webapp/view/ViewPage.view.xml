@@ -1,6 +1,9 @@
 <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:fb="sap.ui.comp.filterbar" xmlns:l="sap.ui.layout" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:ui="sap.ui.table" xmlns:f="sap.f" controllerName="PM030.APP4.controller.ViewPage">
     <f:DynamicPage id="dynamicPageId" preserveHeaderStateOnScroll="true" showFooter="false" fitContent="true" class="sapUiContentPadding">
-        <f:title>
+     <f:landmarkInfo>
+            <f:DynamicPageAccessibleLandmarkInfo rootRole="Region" contentRole="Main" headerRole="Banner" rootLabel="{i18n>Overview_rootLabel}" contentLabel="{i18n>Overview_contentLabel}" headerLabel="{i18n>Overview_headerLabel}"/>
+     </f:landmarkInfo>
+        <f:title >
             <f:DynamicPageTitle>
                 <f:content>
                     <HBox height="100%" alignItems="Center" alignContent="Center" justifyContent="Center">
@@ -9,8 +12,8 @@
                 </f:content>
                 <f:actions></f:actions>
                 <f:navigationActions>
-                    <Button icon="sap-icon://action-settings" press="onPersoButtonPressed" class="sapUiTinyMarginBegin"/>
-                    <Button icon="sap-icon://download" press="onDataExport" class="sapUiTinyMarginBegin"/>
+                    <Button icon="sap-icon://action-settings" press="onPersoButtonPressed" class="sapUiTinyMarginBegin" tooltip="setting" ariaLabelledBy="setting" ariaDescribedBy="settingAction"/>
+                    <Button icon="sap-icon://download" press="onDataExport" class="sapUiTinyMarginBegin" tooltip="download" ariaLabelledBy="download" ariaDescribedBy="downloadAction"/>
                 </f:navigationActions>
             </f:DynamicPageTitle>
         </f:title>
