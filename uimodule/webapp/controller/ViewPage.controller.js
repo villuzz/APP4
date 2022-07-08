@@ -56,13 +56,13 @@ sap.ui.define([
         // var sData = {};
         // sData.TIPO_ORDINE = await this.Shpl("T003O", "CH");
         // sData.DIVISIONE = await this.Shpl("H_T001W", "SH");
-        // sData.TIPO_GESTIONE = await this._getTableNoError("/T_TP_MAN");
-        // sData.TIPO_GESTIONE_1 = await this._getTableNoError("/T_TP_MAN1");
-        // sData.TIPO_GESTIONE_2 = await this._getTableNoError("/T_TP_MAN2");
-        // sData.CENTRO_LAVORO = await this._getTableNoError("/T_DEST");
+        // sData.TIPO_GESTIONE = await this._fetchDataNoError("/T_TP_MAN");
+        // sData.TIPO_GESTIONE_1 = await this._fetchDataNoError("/T_TP_MAN1");
+        // sData.TIPO_GESTIONE_2 = await this._fetchDataNoError("/T_TP_MAN2");
+        // sData.CENTRO_LAVORO = await this._fetchDataNoError("/T_DEST");
         // sData.TIPO_ATTIVITA = await this.Shpl("T353I", "CH");
-        // sData.SISTEMA = await this._getTableNoError("/T_ACT_SYST");
-        // sData.CLASSE = await this._getTableNoError("/T_ACT_CL");
+        // sData.SISTEMA = await this._fetchDataNoError("/T_ACT_SYST");
+        // sData.CLASSE = await this._fetchDataNoError("/T_ACT_CL");
         // oModelHelp.setData(sData);
         // this.getView().setModel(oModelHelp, "sHelp");
         // console.timeEnd("await");
@@ -70,16 +70,17 @@ sap.ui.define([
         const aHelp = [
           this.Shpl("T003O", "CH"),
           this.Shpl("H_T001W", "SH"),
-          this._getTableNoError("/T_TP_MAN"),
-          this._getTableNoError("/T_TP_MAN1"),
-          this._getTableNoError("/T_TP_MAN2"),
-          this._getTableNoError("/T_DEST"),
+          this._fetchDataNoError("/T_TP_MAN"),
+          this._fetchDataNoError("/T_TP_MAN1"),
+          this._fetchDataNoError("/T_TP_MAN2"),
+          this._fetchDataNoError("/T_DEST"),
           this.Shpl("T353I", "CH"),
-          this._getTableNoError("/T_ACT_SYST"),
-          this._getTableNoError("/T_ACT_CL"),
+          this._fetchDataNoError("/T_ACT_SYST"),
+          this._fetchDataNoError("/T_ACT_CL"),
         ];
 
-        console.time('all')
+        // console.time('all')
+        // eslint-disable-next-line no-undef
         return Promise.all(aHelp)
           .then((values) => {
             const [
@@ -106,11 +107,11 @@ sap.ui.define([
             };
             oModelHelp.setData(oData);
             this.getView().setModel(oModelHelp, "sHelp");
-            console.timeEnd('all');
+            // console.timeEnd('all');
           })
           .catch((err) => {
-            console.timeEnd('all');
-            console.log(err);
+            // console.timeEnd('all');
+            MessageBox.error(err.message);
           });
       },
       onSearchResult: function () {
@@ -337,7 +338,7 @@ sap.ui.define([
         aFilter.push(new Filter("Tdspras", FilterOperator.EQ, "I"));
         aFilter.push(new Filter("Tdobject", FilterOperator.EQ, "TEXT"));
 
-        var sTesto = await this._getTableNoError("/TestiEstesi", aFilter);
+        var sTesto = await this._fetchDataNoError("/TestiEstesi", aFilter);
         // EXTRACTION TEXT
         if (sTesto.length !== 0) {
           this.getView().byId("vTextAreaView").setText(sTesto[0].Testo);
@@ -448,25 +449,29 @@ sap.ui.define([
 
         return await this._saveHana("/GetODM", sFilter);
       },
+      _gruopedByKey: function (array, key) {
+        return array.reduce(function (rv, x) {
+          (rv[x[key]] = rv[x[key]] || []).push(x);
+          return rv;
+        }, {});
+      },
       _checkCreazioneODM: async function (aSelected) {
         let oError = { status: false, message: "" };
         // Recupero il binding della riga selezionata
         const aSelectedObj = aSelected.map((e) => e.getBindingContext("mManutenzione").getObject());
 
         // 4 - Posso selezionare più appuntamenti di index diversi (rispettando sempre l’ordine degli appuntamenti) per effettuare la creazione degli ordini. Nel caso in cui seleziono gli appuntamenti sbagliati scatta l’errore “Errore selezione appuntamento”
-        const oGroupedByIndex = aSelectedObj.reduce(function (rv, x) {
-          (rv[x["IndexPmo"]] = rv[x["IndexPmo"]] || []).push(x);
-          return rv;
-        }, {});
+        const oGroupedByIndex = this._gruopedByKey(aSelectedObj, "IndexPmo");
 
         for (const key in oGroupedByIndex) {
+          // eslint-disable-next-line no-prototype-builtins
           if (oGroupedByIndex.hasOwnProperty(key)) {
             const current = oGroupedByIndex[key];
             const index = parseInt(key).toString();
             const { Odm: { results } } = await this._retrieveIndexODM(index);
             // Nel caso in cui si seleziona un appuntamento di un index contenente tutte azioni Elementari disattive, non è possibile creare l’ordine e scatta il messaggio bloccante: “Appuntamenti senza Azioni Elementari attive”
             // chiamata JoinPMO verificare l'expand 
-            const JoinPMO = await this._getTable("/JoinPMO" /* ('${index}') */, [
+            const JoinPMO = await this._fetchData("/JoinPMO" /* ('${index}') */, [
               new Filter("IIndexPmo", FilterOperator.EQ, index)
             ]);
             // 1 - che abbia almeno una azione elementare.
@@ -485,10 +490,11 @@ sap.ui.define([
               }
 
               if (disattivi === res.length) {
-                oError = { status: true, message: "Appuntamenti senza Azioni Elementari attive" };
+                //"Appuntamenti senza Azioni Elementari attive"
+                oError = { status: true, message: oResource.getText("ODMErrorAzioniElementari") };
               }
             } else {
-              oError = { status: true, message: "Appuntamenti senza Azioni Elementari attive" };
+              oError = { status: true, message: oResource.getText("ODMErrorAzioniElementari") };
             }
 
             // 3 - Posso selezionare più appuntamenti dello stesso index (rispettando sempre l’ordine degli appuntamenti) per effettuare la creazione degli ordini. Nel caso in cui seleziono gli appuntamenti sbagliati scatta l’errore “Errore selezione appuntamento”
@@ -496,7 +502,11 @@ sap.ui.define([
               const element = current[i];
               // 2 - Se seleziono un appuntamento di un index già pianificato in ODM, non è possibile creare l’ODM. Scatta il messaggio: “Seleziona Index senza ODM”
               if (element.NumOrdAttivo) {
-                oError = { status: true, message: `L'appuntamento ${element.Napp} contiene già un ODM (${element.NumOrdAttivo})!\n Seleziona Index senza ODM` };
+                // `L'appuntamento ${element.Napp} contiene già un ODM (${element.NumOrdAttivo})!\n Seleziona Index senza ODM`
+                const m = oResource.getText("ODMErrorOrderExists")
+                  .replace("${Napp}", element.Napp)
+                  .replace("${NumOrdAttivo}", element.NumOrdAttivo);
+                oError = { status: true, message: m };
                 break;
               }
 
@@ -504,9 +514,12 @@ sap.ui.define([
               const aBefore = results.filter((e) => e.Napp < element.Napp);
               for (let b = 0; b < aBefore.length; b++) {
                 const e = aBefore[b];
+                // gestione casistica creazione appuntamenti consecutivi.
+                if (current.map(c => c.Napp).includes(e.Napp)) e.NumOrdAttivo = "FITTIZIO";
                 // se ne ha almeno 1 valorizzato tra quelli precedenti da errore
                 if (!e.NumOrdAttivo) {
-                  oError = { status: true, message: "Errore selezione appuntamento" };
+                  // Errore selezione appuntamento
+                  oError = { status: true, message: oResource.getText("ODMErrorSelezione") };
                   break;
                 }
               }
@@ -515,44 +528,129 @@ sap.ui.define([
         }
 
         return oError;
+      },
+      _checkRilascioODM: async function (aSelected) {
+        let m = "";
+        let oError = { status: false, message: "" };
+        // Recupero il binding della riga selezionata
+        const aSelectedObj = aSelected.map((e) => e.getBindingContext("mManutenzione").getObject());
+        // 4 - Possono essere selezionati più appuntamenti dello stesso index o di diversi index con ODM per il rilascio purché abbiano l’ordine in stato APER
+        const oGroupedByIndex = this._gruopedByKey(aSelectedObj, "IndexPmo");
+        for (const key in oGroupedByIndex) {
+          // eslint-disable-next-line no-prototype-builtins
+          if (oGroupedByIndex.hasOwnProperty(key)) {
+            const current = oGroupedByIndex[key];
+            const statiEsclusione = ["TECO", "CONF", "CALP", "KKMP", "NLIA"];
+            for (let i = 0; i < current.length; i++) {
+              const e = current[i];
 
+              // 6 - Selezionando un index con appuntamento ma senza ODM, se provo a rilasciare non sarà possibile poiché non c’è l’ordine
+              if (!e.NumOrdAttivo) {
+                oError = { status: true, message: oResource.getText("ODMErrorNumOrd") };
+                break;
+              }
 
+              // 3 - Selezionando un appuntamento di un index pianificato in ODM, se l’ordine è in stato TECO CONF CALP KKMP NLIA (CHIUSO) scatta il seguente messaggio: “Lo stato dell'ordine xxxxx non ammette alcuna modifica”
+              if (statiEsclusione.includes(e.StatoOdm)) {
+                m = oResource.getText("ODMErrorNotStatusError").replace("${NumOrdAttivo}", e.NumOrdAttivo);
+                oError = { status: true, message: m };
+                break;
+              }
+              // 2 -Nel caso in cui l’ODM è già rilasciato scatta il messaggio “Ordine ${NumOrdAttivo} già rilasciato”.
+              else if (e.StatoOdm === "RIL.") {
+                m = oResource.getText("ODMErrorNotRIL").replace("${NumOrdAttivo}", e.NumOrdAttivo);
+                oError = { status: true, message: m };
+                break;
+              }
+              // 1 - Selezionando un appuntamento di un index pianificato in ODM, prima del rilascio verifica che l’ordine sia in stato APER e non ancora rilasciato. 
+              else if (e.StatoOdm !== "APER") {
+                oError = { status: true, message: oResource.getText("ODMErrorNotAPER") };
+                break;
+              }
+            }
+          }
+        }
+        return oError;
+      },
+      _checkPrintODM: async function (aSelected) {
+        let oError = { status: false, message: "" };
+        // Recupero il binding della riga selezionata
+        const aSelectedObj = aSelected.map((e) => e.getBindingContext("mManutenzione").getObject());
+        // 2 - È possibile selezionare uno o più appuntamenti con Ordine dello stesso index e di index differenti per effettuare la stampa.
+        const oGroupedByIndex = this._gruopedByKey(aSelectedObj, "IndexPmo");
+        for (const key in oGroupedByIndex) {
+          // eslint-disable-next-line no-prototype-builtins
+          if (oGroupedByIndex.hasOwnProperty(key)) {
+            const current = oGroupedByIndex[key];
+            for (let i = 0; i < current.length; i++) {
+              const e = current[i];
+              // 1 - Selezionando un appuntamento senza OdM non è possibile stampare. Scatta il messaggio: “Nella selezione sono presenti solo Appuntamenti Senza ordine”.
+              if (!e.NumOrdAttivo) {
+                oError = { status: true, message: oResource.getText("ODMErrorNumOrd") };
+                break;
+              }
+            }
+          }
+        }
+        return oError;
       },
       /** MANAGE ODM - END */
       onCreaODM: async function () {
-        var that = this;
-        var oTable = this.byId("tbManutenzione");
-        var SelectItem = oTable.getSelectedItems();
-        if (SelectItem.length !== 0) {
+        const oTable = this.byId("tbManutenzione");
+        const dialogAggregatore = this.byId("popAggregatore");
+        const aSelectedItems = oTable.getSelectedItems();
+        if (aSelectedItems.length !== 0) {
           // MANAGE ODM - START
           sap.ui.core.BusyIndicator.show(0);
-          const oError = await this._checkCreazioneODM(SelectItem);
-          sap.ui.core.BusyIndicator.hide(0);
+          const oError = await this._checkCreazioneODM(aSelectedItems);
+
           if (oError && oError.status) {
+            sap.ui.core.BusyIndicator.hide(0);
             return MessageBox.error(oError.message);
           }
           // MANAGE ODM - END
+          sap.ui.core.BusyIndicator.hide(0);
           return MessageBox.warning(oResource.getText("MessageCreaODM"), {
-            actions: [
-              MessageBox.Action.OK, MessageBox.Action.CANCEL
-            ],
+            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
             emphasizedAction: MessageBox.Action.OK,
-            onClose: function (sAction) {
+            onClose: (sAction) => {
               if (sAction === MessageBox.Action.OK) {
                 MessageBox.information(
-                  oResource.getText("MessageAggregatore"),
+                  oResource.getText("MessageGEOCALL"),
                   {
-                    //icon: MessageBox.Icon.WARNING,
-                    //title: oResource.getText("MessageAggregatore"),
                     actions: [MessageBox.Action.YES, MessageBox.Action.NO, oResource.getText("Annulla")],
                     emphasizedAction: oResource.getText("Annulla"),
                     initialFocus: oResource.getText("Annulla"),
-                    onClose: function (sAction2) {
-                      if (sAction2 === MessageBox.Action.YES) {
-                        that.byId("Aggregatore").setValue(that.byId("tbManutenzione").getSelectedItems()[0].getBindingContext("mManutenzione").getObject().Aggregatore);
-                        that.byId("popAggregatore").open();
-                      } else if (sAction2 === MessageBox.Action.NO) {
-                        that.createOdm();
+                    onClose: async (sActionGeoCall) => {
+                      if (sActionGeoCall === MessageBox.Action.YES) {
+                        MessageBox.information(
+                          oResource.getText("MessageAggregatore"),
+                          {
+                            actions: [MessageBox.Action.YES, MessageBox.Action.NO, oResource.getText("Annulla")],
+                            emphasizedAction: oResource.getText("Annulla"),
+                            initialFocus: oResource.getText("Annulla"),
+                            onClose: async (sActionAggregatore) => {
+                              if (sActionAggregatore === MessageBox.Action.YES) {
+                                //that.byId("Aggregatore").setValue(that.byId("tbManutenzione").getSelectedItems()[0].getBindingContext("mManutenzione").getObject().Aggregatore);
+                                const oAggregatori = this._gruopedByKey(aSelectedItems.map(s => s.getBindingContext("mManutenzione").getObject()), "IndexPmo");
+                                const aAggregatori = [];
+                                for (const key in oAggregatori) {
+                                  // eslint-disable-next-line no-prototype-builtins
+                                  if (oAggregatori.hasOwnProperty(key)) {
+                                    const element = oAggregatori[key];
+                                    aAggregatori.push({ IndexPmo: key, Aggregatore: element[0].Aggregatore || "", Descrizione: "", Note: "" });
+                                  }
+                                }
+                                dialogAggregatore.setModel(new JSONModel({ pagesCount: 4, items: aAggregatori }));
+                                dialogAggregatore.open();
+                              } else if (sActionAggregatore === MessageBox.Action.NO) {
+                                await this.doCreateOdm(true, false);
+                              }
+                            }
+                          }
+                        );
+                      } else {
+                        await this.doCreateOdm(false, false);
                       }
                     }
                   }
@@ -564,19 +662,92 @@ sap.ui.define([
           return MessageBox.error(oResource.getText("MessageNotSelected"));
         }
       },
-      createOdm: async function (Aggregatore) {
+      doConsuntivazione: async function () {
+        sap.ui.core.BusyIndicator.show(0);
+        var aItems = this.byId("tbManutenzione").getSelectedItems();
+        const aRes = [];
+        for (var i = 0; i < aItems.length; i++) {
+          var payload = aItems[i].getBindingContext("mManutenzione").getObject();
+          var result = await this._fetchData("/PrintOrderOutputBin", [new Filter("OutputBin", FilterOperator.EQ, payload.NumOrdAttivo)]);
+          aRes.push(result);
+        }
+        sap.ui.core.BusyIndicator.hide(0);
+        return MessageBox.success(oResource.getText("MessageSuccessCreate"));
+      },
+      doPrint: async function () {
+        sap.ui.core.BusyIndicator.show(0);
+        const aItems = this.byId("tbManutenzione").getSelectedItems();
+        const aRes = [];
+        for (let i = 0; i < aItems.length; i++) {
+          const oBinding = aItems[i].getBindingContext("mManutenzione").getObject();
+
+          const oPayload = {
+            WorkPaper: "ES15", PaperText: "", TDdest: "FRONTEND", OutputBin: "",
+            "TOrderSet": [{ Aufnr: oBinding.NumOrdAttivo, Operation: "", Matnr: "", Maktx: "" }],
+            "PrintOrderOutputBinSet": []
+          };
+
+          var result = await this._saveHana("/ShopPaper", oPayload);
+          aRes.push(result);
+        }
+        var pdfData = atob(
+          "JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwog" +
+          "IC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAv" +
+          "TWVkaWFCb3ggWyAwIDAgMjAwIDIwMCBdCiAgL0NvdW50IDEKICAvS2lkcyBbIDMgMCBSIF0K" +
+          "Pj4KZW5kb2JqCgozIDAgb2JqCjw8CiAgL1R5cGUgL1BhZ2UKICAvUGFyZW50IDIgMCBSCiAg" +
+          "L1Jlc291cmNlcyA8PAogICAgL0ZvbnQgPDwKICAgICAgL0YxIDQgMCBSIAogICAgPj4KICA+" +
+          "PgogIC9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKCjQgMCBvYmoKPDwKICAvVHlwZSAvRm9u" +
+          "dAogIC9TdWJ0eXBlIC9UeXBlMQogIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KPj4KZW5kb2Jq" +
+          "Cgo1IDAgb2JqICAlIHBhZ2UgY29udGVudAo8PAogIC9MZW5ndGggNDQKPj4Kc3RyZWFtCkJU" +
+          "CjcwIDUwIFRECi9GMSAxMiBUZgooSGVsbG8sIHdvcmxkISkgVGoKRVQKZW5kc3RyZWFtCmVu" +
+          "ZG9iagoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDEwIDAwMDAwIG4g" +
+          "CjAwMDAwMDAwNzkgMDAwMDAgbiAKMDAwMDAwMDE3MyAwMDAwMCBuIAowMDAwMDAwMzAxIDAw" +
+          "MDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9v" +
+          "dCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G");
+
+        aRes.map((current) => {
+          var blob = new Blob([current.OutputBin || pdfData], { type: "application/pdf" });
+          var objectUrl = URL.createObjectURL(blob);
+          window.open(objectUrl);
+        });
+
+        sap.ui.core.BusyIndicator.hide(0);
+        return MessageBox.success(oResource.getText("MessageSuccessCreate"));
+      },
+      doReleaseOdm: async function () {
+        sap.ui.core.BusyIndicator.show(0);
+        var aItems = this.byId("tbManutenzione").getSelectedItems();
+        for (var i = 0; i < aItems.length; i++) {
+          var payload = aItems[i].getBindingContext("mManutenzione").getObject();
+          var sData = this._fillPayloadUpdate(payload);
+          var result = await this._saveHana("/UpdateOrder", sData);
+          if (result.ErrorMessagesSet.results.map(r => r.Type).indexOf("E") !== -1) {
+            sap.ui.core.BusyIndicator.hide(0);
+            return MessageBox.error((result.ErrorMessagesSet.results.map((r) => r.Message).join("\n")));
+          }
+        }
+        sap.ui.core.BusyIndicator.hide(0);
+        this.onSearchResult();
+        return MessageBox.success(oResource.getText("MessageSuccessCreate"));
+      },
+      doCreateOdm: async function (Geocall, Aggregatore) {
+        sap.ui.core.BusyIndicator.show(0);
         var aItems = this.byId("tbManutenzione").getSelectedItems();
         for (var i = 0; i < aItems.length; i++) {
           var payload = aItems[i].getBindingContext("mManutenzione").getObject();
           //Crea ODM 
           var sData = this._fillPayloadInsert(payload);
+          if (Geocall && !Aggregatore) sData.Status = "GEOC";
+          else if (Geocall && Aggregatore) sData.Status = "GEAG";
+
           var result = await this._saveHana("/CreateOrder", sData);
 
-          // gestire taella di ritorno. --> results.ErrorMessagesSet
+          if (result.ErrorMessagesSet.results.map(r => r.Type).indexOf("E") !== -1) {
+            sap.ui.core.BusyIndicator.hide(0);
+            return MessageBox.error((result.ErrorMessagesSet.results.map((r) => r.Message).join("\n")));
+          }
 
-          //Aggiorna Tabelle Z 
           if (result.OrderNumber !== "") {
-
             var lineWO = {
               Zcount: "",
               IndexOdm: payload.IndexPmo,
@@ -591,25 +762,27 @@ sap.ui.define([
               Aplzl5: payload.Aplzl5,
               Qmnum: "",
               NumIntervento: "",
-              StatoOdm: "I0001",
+              StatoOdm: "APER",
               DettConf: "",
-              DataPian: this.formatDate(payload.InizioVal),
-              DataFineCard: this.formatDate(payload.FineCard),
-              //DataPianNatur:this.formatDate(sItems.InizioVal) todo
+              DataPian: payload.Datpia || null,
+              DataFineCard: payload.FineCard || null,
+              DataPianNatur: payload.InizioVal || null
             };
 
+            // Da Gestire
             if (Aggregatore === "X") {
               lineWO.Aggregatore = payload.aggregatore;
               lineWO.DescAggregatore = payload.desc_aggregatore;
             }
 
-
+            await this._saveHana("/T_APP_WO", lineWO);
             //INSERT zpm4r_t_app_wo.
             //UPDATE zpm4r_t_pmo SET scostamento = 0 fine_card = '00000000' WHERE index_pmo EQ tabt_app_odm-index_pmo AND appuntam EQ tabt_app_odm-napp
-
           }
         }
-        MessageBox.success(oResource.getText("MessageSuccessCreate"));
+        sap.ui.core.BusyIndicator.hide(0);
+        this.onSearchResult();
+        return MessageBox.success(oResource.getText("MessageSuccessCreate"));
       },
       _fillPayloadInsert: function (sItems) {
         const payloadInsert = {
@@ -623,8 +796,8 @@ sap.ui.define([
           PlannerGroup: "",
           MaintPlanningPlant: "",
           Description: "SHORT 1", // Sembra un concatena tra estrazione di "impianto" e Tipo Attività PM, però a volte prende la descrizione del terzo livello della Sede Tecnica e la Descrizione Azione PMO (da controllare a codice)
-          StartDate: this.formatDate(new Date()), // "20190314", // Data Pianificazione
-          FinishDate: this.formatDate(new Date()), //"20190314", // Data Pianificazione
+          StartDate: this.formatDate(sItems.Datpia), // "20190314", // Data Pianificazione
+          FinishDate: this.formatDate(sItems.Datpia), //"20190314", // Data Pianificazione
           MaintPlant: "",
           Plant: "",
           MainWorkCenter: "",
@@ -819,8 +992,55 @@ sap.ui.define([
         // return line;
 
       },
-      onConfirmAgg: function () {
-        this.createOdm("X");
+      _fillPayloadUpdate: function (sItems) {
+        const payloadUpdate = {
+          SystemStatus: "RIL.",
+          UserPartner: "",
+          UserPartnerOld: "",
+          NotificationID: "",
+          OrderNumber: sItems.NumOrdAttivo,
+          Status: "",
+          EquipmentID: "",
+          OrderType: sItems.TipoOrdine, // "M4", // TipoOrdine
+          SystCondition: sItems.Indisponibilita, // "0", // Indisponibilita
+          FunctionalLocation: sItems.StComponente, // "ITW-ITWI-A1-01", // Sede Tecnica
+          PlannerGroup: "",
+          MaintPlanningPlant: "",
+          Description: "SHORT 1", // Sembra un concatena tra estrazione di "impianto" e Tipo Attività PM, però a volte prende la descrizione del terzo livello della Sede Tecnica e la Descrizione Azione PMO (da controllare a codice)
+          StartDate: this.formatDate(sItems.Datpia), // "20190314", // Data Pianificazione
+          FinishDate: this.formatDate(sItems.Datpia), //"20190314", // Data Pianificazione
+          MaintPlant: "",
+          Plant: "",
+          MainWorkCenter: "",
+          MantActivityType: sItems.TipoAttivita, // "AC", // Tipo Attività PM
+          ProcessingGrp: "00",
+          Priority: sItems.Priorita, // "3", // Priorità
+          OperationListSet: [],
+          // expands
+          ErrorMessagesSet: [],
+          // ObjectListSet: [],
+          // OrderDetailsSet: [],
+          // TUserStatusSet: [],
+          // TextCreateOrderSet: []
+        };
+        for (let index = 0; index < 6; index++) {
+          payloadUpdate.OperationListSet.push({
+            OperationNumber: `${index + 1}0`.toString().padStart(4, "0"), // "0010", // 0010, 0020, 0030 ecc
+            ControlKey: sItems[`Steus${index || ""}`], // "", //"PM01", // Steus, Steus1, Steus2, Steus3, Steus4, Steus5
+            WorkCenter: sItems[`Cdl${index || ""}`], // "I_MM5", // Cdl, Cdl1, Cdl2, Cdl3, Cdl4, Cdl5
+            Plant: sItems.Divisionec, // Divisionec
+            Description: "", // ? 
+            Quantity: "0", // Persone, Persone1, Persone2, Persone3, Persone4, Persone5
+            Price: "0", // Num, Num1, Num2, Num3, Num4, Num5
+            WorkActivity: "0", // "", // Lstar, Lstar1, Lstar2, Lstar3, Lstar4, Lstar5
+            NormalDuration: sItems[`Hper${index || ""}`].toString(), // "0", // Hper, Hper1, Hper2, Hper3, Hper4, Hper5
+            WorkUnit: sItems.Daune // "H" // Daune
+          });
+        }
+        return payloadUpdate;
+      },
+      onConfirmAgg: async function () {
+        await this.doCreateOdm(true, true);
         this.byId("popAggregatore").close();
       },
       onCloseAgg: function () {
@@ -845,34 +1065,61 @@ sap.ui.define([
           MessageBox.error(oResource.getText("MessageNotSelected"));
         }
       },
-      onRilascioODM: function () {
+      onReleaseODM: async function () {
         var oTable = this.byId("tbManutenzione");
-        var SelectItem = oTable.getSelectedItems();
-        if (SelectItem.length !== 0) {
-          MessageBox.warning(oResource.getText("MessageRilascioODM"), {
+        var aSelectedItems = oTable.getSelectedItems();
+
+        if (aSelectedItems.length !== 0) {
+          // MANAGE ODM - START
+          sap.ui.core.BusyIndicator.show(0);
+          const oError = await this._checkRilascioODM(aSelectedItems);
+
+          if (oError && oError.status) {
+            sap.ui.core.BusyIndicator.hide(0);
+            return MessageBox.error(oError.message);
+          }
+          // MANAGE ODM - END
+          sap.ui.core.BusyIndicator.hide(0);
+          return MessageBox.warning(oResource.getText("MessageRilascioODM"), {
             actions: [
               MessageBox.Action.OK, MessageBox.Action.CANCEL
             ],
             emphasizedAction: MessageBox.Action.OK,
-            onClose: function () { }
+            onClose: async (sAction) => {
+              if (sAction === MessageBox.Action.OK)
+                await this.doReleaseOdm();
+            }
           });
         } else {
-          MessageBox.error(oResource.getText("MessageNotSelected"));
+          return MessageBox.error(oResource.getText("MessageNotSelected"));
         }
       },
-      onStampaDoc: function () {
+      onStampaDoc: async function () {
         var oTable = this.byId("tbManutenzione");
-        var SelectItem = oTable.getSelectedItems();
-        if (SelectItem.length !== 0) {
-          MessageBox.warning(oResource.getText("MessageStampaDoc"), {
+        var aSelectedItems = oTable.getSelectedItems();
+        if (aSelectedItems.length !== 0) {
+          // MANAGE ODM - START
+          sap.ui.core.BusyIndicator.show(0);
+          const oError = await this._checkPrintODM(aSelectedItems);
+
+          if (oError && oError.status) {
+            sap.ui.core.BusyIndicator.hide(0);
+            return MessageBox.error(oError.message);
+          }
+          // MANAGE ODM - END
+          return MessageBox.warning(oResource.getText("MessageStampaDoc"), {
             actions: [
               MessageBox.Action.OK, MessageBox.Action.CANCEL
             ],
             emphasizedAction: MessageBox.Action.OK,
-            onClose: function () { }
+            onClose: async (sAction) => {
+              if (sAction === MessageBox.Action.OK) {
+                await this.doPrint();
+              }
+            }
           });
         } else {
-          MessageBox.error(oResource.getText("MessageNotSelected"));
+          return MessageBox.error(oResource.getText("MessageNotSelected"));
         }
       },
       onConsuntivazione: function () {
@@ -884,7 +1131,11 @@ sap.ui.define([
               MessageBox.Action.OK, MessageBox.Action.CANCEL
             ],
             emphasizedAction: MessageBox.Action.OK,
-            onClose: function () { }
+            onClose: (sAction) => {
+              if (sAction === MessageBox.Action.OK) {
+                this.doConsuntivazione();
+              }
+            }
           });
         } else {
           MessageBox.error(oResource.getText("MessageNotSelected"));

@@ -1,420 +1,426 @@
 <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:fb="sap.ui.comp.filterbar" xmlns:l="sap.ui.layout" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:ui="sap.ui.table" xmlns:f="sap.f" controllerName="PM030.APP4.controller.ViewPage">
-    <f:DynamicPage id="dynamicPageId" preserveHeaderStateOnScroll="true" showFooter="false" fitContent="true" class="sapUiContentPadding">
-     <f:landmarkInfo>
-            <f:DynamicPageAccessibleLandmarkInfo rootRole="Region" contentRole="Main" headerRole="Banner" rootLabel="{i18n>Overview_rootLabel}" contentLabel="{i18n>Overview_contentLabel}" headerLabel="{i18n>Overview_headerLabel}"/>
-     </f:landmarkInfo>
-        <f:title >
-            <f:DynamicPageTitle>
-                <f:content>
-                    <HBox height="100%" alignItems="Center" alignContent="Center" justifyContent="Center">
-                        <Title text="{i18n>TitoloOdm}"/>
-                    </HBox>
-                </f:content>
-                <f:actions></f:actions>
-                <f:navigationActions>
-                    <Button icon="sap-icon://action-settings" press="onPersoButtonPressed" class="sapUiTinyMarginBegin" tooltip="setting" ariaLabelledBy="setting" ariaDescribedBy="settingAction"/>
-                    <Button icon="sap-icon://download" press="onDataExport" class="sapUiTinyMarginBegin" tooltip="download" ariaLabelledBy="download" ariaDescribedBy="downloadAction"/>
-                </f:navigationActions>
-            </f:DynamicPageTitle>
-        </f:title>
-        <f:header>
-            <f:DynamicPageHeader pinnable="true">
-                <f:content>
-                    <fb:FilterBar id="filterbarPiste" useToolbar="false" search="onSearchResult" showRestoreButton="true" showClearButton="true">
-                        <fb:filterGroupItems>
+  <f:DynamicPage id="dynamicPageId" preserveHeaderStateOnScroll="true" showFooter="false" fitContent="true" class="sapUiContentPadding">
+    <f:landmarkInfo>
+          <f:DynamicPageAccessibleLandmarkInfo rootRole="Region" contentRole="Main" headerRole="Banner" rootLabel="{i18n>Overview_rootLabel}" contentLabel="{i18n>Overview_contentLabel}" headerLabel="{i18n>Overview_headerLabel}"/>
+    </f:landmarkInfo>
+      <f:title >
+        <f:DynamicPageTitle>
+            <f:content>
+                <HBox height="100%" alignItems="Center" alignContent="Center" justifyContent="Center">
+                    <Title text="{i18n>TitoloOdm}"/>
+                </HBox>
+            </f:content>
+            <f:actions></f:actions>
+            <f:navigationActions>
+                <Button icon="sap-icon://action-settings" press="onPersoButtonPressed" class="sapUiTinyMarginBegin" tooltip="setting" ariaLabelledBy="setting" ariaDescribedBy="settingAction"/>
+                <Button icon="sap-icon://download" press="onDataExport" class="sapUiTinyMarginBegin" tooltip="download" ariaLabelledBy="download" ariaDescribedBy="downloadAction"/>
+            </f:navigationActions>
+        </f:DynamicPageTitle>
+      </f:title>
+      <f:header>
+        <f:DynamicPageHeader pinnable="true">
+            <f:content>
+              <fb:FilterBar id="filterbarPiste" useToolbar="false" search="onSearchResult" showRestoreButton="true" showClearButton="true">
+                  <fb:filterGroupItems>
 
-                           <fb:FilterGroupItem id="dataDiRiferimento" visible="true" groupName="__$INTERNAL$" name="ddr" label="{i18n>DataDiRiferimento}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <DatePicker id="DateP1" required="true" placeholder="Inserisci giorno" class="sapUiSmallMarginBottom" displayFormat="dd-MM-YYYY" dateValue="{sFilter>/DataDiRiferimento}"/>
-                                </fb:control>
-                            </fb:FilterGroupItem>                        
+                      <fb:FilterGroupItem id="dataDiRiferimento" visible="true" groupName="__$INTERNAL$" name="ddr" label="{i18n>DataDiRiferimento}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <DatePicker id="DateP1" required="true" placeholder="Inserisci giorno" displayFormat="dd-MM-YYYY" dateValue="{sFilter>/DataDiRiferimento}"/>
+                          </fb:control>
+                      </fb:FilterGroupItem>                        
 
-                            <fb:FilterGroupItem id="periodoDiSelezioneDa" visible="true" groupName="__$INTERNAL$" name="pdsd" label="{i18n>PeriodoDiSelezioneDa}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <DatePicker id="DateP2" required="true" placeholder="da" class="sapUiSmallMarginBottom" displayFormat="dd-MM-YYYY" dateValue="{sFilter>/PeriodoDiSelezioneDa}"/>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="periodoDiSelezioneDa" visible="true" groupName="__$INTERNAL$" name="pdsd" label="{i18n>PeriodoDiSelezioneDa}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <DatePicker id="DateP2" required="true" placeholder="da" displayFormat="dd-MM-YYYY" dateValue="{sFilter>/PeriodoDiSelezioneDa}"/>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="periodoDiSelezioneA" visible="true" groupName="__$INTERNAL$" name="pdsa" label="{i18n>PeriodoDiSelezioneA}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <DatePicker id="DateP3" required="true" placeholder="a" class="sapUiSmallMarginBottom" displayFormat="dd-MM-YYYY" dateValue="{sFilter>/PeriodoDiSelezioneA}"/>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="periodoDiSelezioneA" visible="true" groupName="__$INTERNAL$" name="pdsa" label="{i18n>PeriodoDiSelezioneA}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <DatePicker id="DateP3" required="true" placeholder="a" displayFormat="dd-MM-YYYY" dateValue="{sFilter>/PeriodoDiSelezioneA}"/>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="divisione" visible="true" groupName="__$INTERNAL$" name="div" label="{i18n>Divisione}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                              <fb:control>
-                                <ComboBox valueStateText="{i18n>valueState} {i18n>DIVISIONE}" showSecondaryValues="true" items="{ path: 'sHelp>/DIVISIONE', length:2500 }" selectedKey="{sFilter>/Divisione}">
+                      <fb:FilterGroupItem id="divisione" visible="true" groupName="__$INTERNAL$" name="div" label="{i18n>Divisione}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                        <fb:control>
+                          <ComboBox valueStateText="{i18n>valueState} {i18n>DIVISIONE}" showSecondaryValues="true" items="{ path: 'sHelp>/DIVISIONE', length:2500 }" selectedKey="{sFilter>/Divisione}">
+                            <core:ListItem key="{sHelp>Fieldname1}" text="{sHelp>Fieldname1}" additionalText="{sHelp>Fieldname2}"/>
+                          </ComboBox>
+                        </fb:control>
+                      </fb:FilterGroupItem>
+
+                      <fb:FilterGroupItem id="index" visible="true" groupName="__$INTERNAL$" name="ind" label="{i18n>Index}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <Input type="Number" value="{sFilter>/Index}" maxLength="12"/>
+                          </fb:control>
+                      </fb:FilterGroupItem>
+
+                      <fb:FilterGroupItem id="tipoSchedulazione" visible="true" groupName="__$INTERNAL$" name="ts" label="{i18n>TipoSchedulazione}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <Select id="tipoFrequenza" selectedKey="{sFilter>/TipoSchedulazione}">
+                                  <items>
+                                      <core:ListItem xmlns:core="sap.ui.core" key="" text=""/>
+                                      <core:ListItem xmlns:core="sap.ui.core" key="C" text="C"/>
+                                      <core:ListItem xmlns:core="sap.ui.core" key="T" text="T"/>
+                                  </items>
+                              </Select>
+                          </fb:control>
+                      </fb:FilterGroupItem>
+
+                      <fb:FilterGroupItem id="tipoOrdine" visible="true" groupName="__$INTERNAL$" name="to" label="{i18n>TipoOrdine}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <ComboBox valueStateText="{i18n>valueState} {i18n>TIPO_ORDINE}" showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_ORDINE' }" selectedKey="{sSelect>/TipoOrdine}">
+                                <core:ListItem key="{sHelp>Fieldname1}" text="{sHelp>Fieldname1}" additionalText="{sHelp>Fieldname2} - {sHelp>Fieldname3}"/>
+                              </ComboBox>
+                          </fb:control>
+                      </fb:FilterGroupItem>
+
+                      <fb:FilterGroupItem id="tipoAttivita" visible="true" groupName="__$INTERNAL$" name="ta" label="{i18n>TipoAttivita}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                                <ComboBox valueStateText="{i18n>valueState} {i18n>TIPO_ATTIVITA}" showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_ATTIVITA', length:2000 }" selectedKey="{sFilter>/TipoAttivita}">
                                   <core:ListItem key="{sHelp>Fieldname1}" text="{sHelp>Fieldname1}" additionalText="{sHelp>Fieldname2}"/>
                                 </ComboBox>
-                              </fb:control>
-                            </fb:FilterGroupItem>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="index" visible="true" groupName="__$INTERNAL$" name="ind" label="{i18n>Index}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <Input type="Number" value="{sFilter>/Index}" maxLength="12"/>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="indisponibilita" visible="true" groupName="__$INTERNAL$" name="indisp" label="{i18n>Indisponibilita}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                                <Select id="onlyActive" selectedKey="{sFilter>/Indisponibilita}">
+                                  <items>
+                                  <core:ListItem xmlns:core="sap.ui.core" key="" text="" />
+                                  <core:ListItem xmlns:core="sap.ui.core" key="0" icon="sap-icon://decline" text="0" />
+                                  <core:ListItem xmlns:core="sap.ui.core" key="1" icon="sap-icon://accept" text="1"/>
+                                  </items>
+                                </Select>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="tipoSchedulazione" visible="true" groupName="__$INTERNAL$" name="ts" label="{i18n>TipoSchedulazione}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <Select xmlns="sap.m" id="tipoFrequenza" selectedKey="{sFilter>/TipoSchedulazione}">
-                                        <items>
-                                            <core:ListItem xmlns:core="sap.ui.core" key="" text=""/>
-                                            <core:ListItem xmlns:core="sap.ui.core" key="C" text="C"/>
-                                            <core:ListItem xmlns:core="sap.ui.core" key="T" text="T"/>
-                                        </items>
-                                    </Select>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="sistema" visible="true" groupName="__$INTERNAL$" name="sis" label="{i18n>Sistema}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                                <ComboBox change="onFilterHelp" valueStateText="{i18n>valueState} {i18n>SISTEMA}" showSecondaryValues="true" items="{ path: 'sHelp>/SISTEMA', length:2000 }" selectedKey="{sFilter>/Sistema}">
+                              <core:ListItem key="{sHelp>Sistema}" text="{sHelp>Sistema}" additionalText="{sHelp>Txt}"/>
+                                </ComboBox>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="tipoOrdine" visible="true" groupName="__$INTERNAL$" name="to" label="{i18n>TipoOrdine}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <ComboBox valueStateText="{i18n>valueState} {i18n>TIPO_ORDINE}" showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_ORDINE' }" selectedKey="{sSelect>/TipoOrdine}">
-                                      <core:ListItem key="{sHelp>Fieldname1}" text="{sHelp>Fieldname1}" additionalText="{sHelp>Fieldname2} - {sHelp>Fieldname3}"/>
+                      <fb:FilterGroupItem id="azione" visible="true" groupName="__$INTERNAL$" name="azione" label="{i18n>Azione}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <Input type="Number" value="{sFilter>/Azione}" maxLength="5"/>
+                          </fb:control>
+                      </fb:FilterGroupItem>
+
+                      <fb:FilterGroupItem id="classe" visible="true" groupName="__$INTERNAL$" name="classe" label="{i18n>Classe}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                                <ComboBox valueStateText="{i18n>valueState} {i18n>CLASSE}" showSecondaryValues="true" items="{ path: 'sHelp>/CLASSE', length:2000 }" selectedKey="{sFilter>/Classe}">
+                                      <core:ListItem key="{sHelp>Classe}" text="{sHelp>Classe}" additionalText="{sHelp>Txt}"/>
                                     </ComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="tipoAttivita" visible="true" groupName="__$INTERNAL$" name="ta" label="{i18n>TipoAttivita}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                     <ComboBox valueStateText="{i18n>valueState} {i18n>TIPO_ATTIVITA}" showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_ATTIVITA', length:2000 }" selectedKey="{sFilter>/TipoAttivita}">
-                                        <core:ListItem key="{sHelp>Fieldname1}" text="{sHelp>Fieldname1}" additionalText="{sHelp>Fieldname2}"/>
+                      <fb:FilterGroupItem id="impianto" visible="true" groupName="__$INTERNAL$" name="impianto" label="{i18n>Impianto}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <Input type="Text" value="{sFilter>/Impianto}" maxLength="40"/>
+                          </fb:control>
+                      </fb:FilterGroupItem>
+
+                      <fb:FilterGroupItem id="sedeTecnicaComponente" visible="true" groupName="__$INTERNAL$" name="std" label="{i18n>SedeTecnicaComponente}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <Input type="Text" value="{sFilter>/SedeTecnicaComponente}" maxLength="40"/>
+                          </fb:control>
+                      </fb:FilterGroupItem>
+
+                      <fb:FilterGroupItem id="componenteEquipment" visible="true" groupName="__$INTERNAL$" name="ce" label="{i18n>ComponenteEquipment}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <Input type="Text" value="{sFilter>/ComponenteEquipment}" maxLength="18"/>
+                          </fb:control>
+                      </fb:FilterGroupItem>
+
+                      <fb:FilterGroupItem id="descrizioneComponente" visible="true" groupName="__$INTERNAL$" name="dc" label="{i18n>DescrizioneComponente}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <Input type="Text" value="{sFilter>/DescrizioneComponente}" maxLength="80"/>
+                          </fb:control>
+                      </fb:FilterGroupItem>
+
+                      <fb:FilterGroupItem id="centroDiLavoro" visible="true" groupName="__$INTERNAL$" name="cdl" label="{i18n>CentroDiLavoro}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                                <ComboBox valueStateText="{i18n>valueState} {i18n>CENTRO_LAVORO}" showSecondaryValues="true" items="{ path: 'sHelp>/CENTRO_LAVORO', length:2500 }" selectedKey="{sFilter>/CentroDiLavoro}">
+                                        <core:ListItem key="{sHelp>Arbpl}" text="{sHelp>Arbpl}" additionalText="{sHelp>Werks} - {sHelp>Destinatario}"/>
                                       </ComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="indisponibilita" visible="true" groupName="__$INTERNAL$" name="indisp" label="{i18n>Indisponibilita}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                      <Select xmlns="sap.m" id="onlyActive" selectedKey="{sFilter>/Indisponibilita}">
-                                        <items>
-                                        <core:ListItem xmlns:core="sap.ui.core" key="" text="" />
-                                        <core:ListItem xmlns:core="sap.ui.core" key="0" icon="sap-icon://decline" text="0" />
-                                        <core:ListItem xmlns:core="sap.ui.core" key="1" icon="sap-icon://accept" text="1"/>
-                                        </items>
-                                      </Select>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="destinatario" visible="true" groupName="__$INTERNAL$" name="dest" label="{i18n>Destinatario}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                                <ComboBox valueStateText="{i18n>valueState} {i18n>Destinatario}" showSecondaryValues="true" items="{ path: 'sHelp>/CENTRO_LAVORO', length:2500 }" selectedKey="{sFilter>/Destinatario}">
+                                  <core:ListItem key="{sHelp>Destinatario}" text="{sHelp>Destinatario}" additionalText="{sHelp>Werks} - {sHelp>Arbpl}"/>
+                                </ComboBox>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="sistema" visible="true" groupName="__$INTERNAL$" name="sis" label="{i18n>Sistema}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                     <ComboBox change="onFilterHelp" valueStateText="{i18n>valueState} {i18n>SISTEMA}" showSecondaryValues="true" items="{ path: 'sHelp>/SISTEMA', length:2000 }" selectedKey="{sFilter>/Sistema}">
-                                    <core:ListItem key="{sHelp>Sistema}" text="{sHelp>Sistema}" additionalText="{sHelp>Txt}"/>
-                                      </ComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="percorso" visible="true" groupName="__$INTERNAL$" name="perc" label="{i18n>Percorso}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <Input type="Text" value="{sFilter>/Percorso}" maxLength="15"/>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="azione" visible="true" groupName="__$INTERNAL$" name="azione" label="{i18n>Azione}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <Input type="Number" value="{sFilter>/Azione}" maxLength="5"/>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="tipoGestione" visible="true" groupName="__$INTERNAL$" name="tg" label="{i18n>TipoGestione}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                                <ComboBox showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_GESTIONE' }" selectedKey="{sFilter>/TipoGestione}">
+                                    <core:ListItem key="{sHelp>TipoGestione}" text="{sHelp>TipoGestione}" additionalText="{sHelp>Divisione} - {sHelp>DesTipoGest}"/>
+                                </ComboBox>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="classe" visible="true" groupName="__$INTERNAL$" name="classe" label="{i18n>Classe}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                     <ComboBox valueStateText="{i18n>valueState} {i18n>CLASSE}" showSecondaryValues="true" items="{ path: 'sHelp>/CLASSE', length:2000 }" selectedKey="{sFilter>/Classe}">
-                                            <core:ListItem key="{sHelp>Classe}" text="{sHelp>Classe}" additionalText="{sHelp>Txt}"/>
-                                          </ComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="finalita" visible="true" groupName="__$INTERNAL$" name="fin" label="{i18n>Finalita}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <ComboBox showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_GESTIONE_1' }" selectedKey="{sFilter>/Finalita}">
+                                  <core:ListItem key="{sHelp>TipoGestione1}" text="{sHelp>TipoGestione1}" additionalText="{sHelp>Divisione} - {sHelp>DesTipoGest1}"/>
+                              </ComboBox>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="impianto" visible="true" groupName="__$INTERNAL$" name="impianto" label="{i18n>Impianto}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <Input type="Text" value="{sFilter>/Impianto}" maxLength="40"/>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="grupControllo" visible="true" groupName="__$INTERNAL$" name="gc" label="{i18n>GrupControllo}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                                <ComboBox showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_GESTIONE_2' }" selectedKey="{sFilter>/GrupControllo}">
+                                  <core:ListItem key="{sHelp>TipoGestione2}" text="{sHelp>TipoGestione2}" additionalText="{sHelp>Divisione} - {sHelp>DesTipoGest2}"/>
+                                </ComboBox>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="sedeTecnicaComponente" visible="true" groupName="__$INTERNAL$" name="std" label="{i18n>SedeTecnicaComponente}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <Input type="Text" value="{sFilter>/SedeTecnicaComponente}" maxLength="40"/>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="collective" visible="true" groupName="__$INTERNAL$" name="col" label="{i18n>Collective}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                          <fb:control>
+                              <Select selectedKey="{sFilter>/Collective}">
+                                  <items>
+                                  <core:ListItem xmlns:core="sap.ui.core" key="" text="" />
+                                  <core:ListItem xmlns:core="sap.ui.core" key="X" text="X" />
+                                  </items>
+                                </Select>
+                          </fb:control>
+                      </fb:FilterGroupItem>
 
-                            <fb:FilterGroupItem id="componenteEquipment" visible="true" groupName="__$INTERNAL$" name="ce" label="{i18n>ComponenteEquipment}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <Input type="Text" value="{sFilter>/ComponenteEquipment}" maxLength="18"/>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                  </fb:filterGroupItems>
+              </fb:FilterBar>
+                
+            </f:content>
+        </f:DynamicPageHeader>
+      </f:header>
+      <f:content>
+          <ScrollContainer width="100%" height="100%" vertical="true" horizontal="true">
+              <Table id="tbManutenzione" items="{path: 'mManutenzione>/'}"  mode="MultiSelect" sticky="HeaderToolbar,ColumnHeaders">
+                <headerToolbar>
+                  <OverflowToolbar style="Clear" class="sapUiMediumMarginTop">
+                    <Button icon="sap-icon://history" type="Ghost" text="{i18n>ImpostaData}" id="btnImpostaData" press="onImpostaData" tooltip="{i18n>ImpostaDataTooltip}"/>
+                    <Button icon="sap-icon://delete" type="Ghost" text="{i18n>CancellaData}" id="btnCancellaData" press="onCancellaData" tooltip="{i18n>CancellaDataTooltip}"/>
+                    <Button icon="sap-icon://create" type="Emphasized" text="{i18n>CreaODM}" id="btnCreaODM" press="onCreaODM" tooltip="{i18n>CreaODMTooltip}"/>
+                    <ToolbarSpacer/>
+                    <Button icon="sap-icon://flag" type="Accept" text="{i18n>RilascioODM}" id="btnRilascioODM" press="onReleaseODM" tooltip="{i18n>RilascioODMTooltip}"/>
+                    <Button icon="sap-icon://print" type="Ghost" text="{i18n>StampaDoc}" id="btnStampaDoc" press="onStampaDoc" tooltip="{i18n>StampaDocTooltip}"/>
+                    <Button icon="sap-icon://action-settings" type="Ghost" text="{i18n>Consuntivazione}" id="btnConsuntivazione" press="onConsuntivazione" tooltip="{i18n>ConsuntivazioneTooltip}"/>
+                    <Button icon="sap-icon://add" type="Ghost" text="{i18n>Create}" id="btnCreate" press="onCreate" tooltip="{i18n>CreateTooltip}"/>
+                    <Button icon="sap-icon://connected" type="Reject" text="{i18n>Aggrega}" id="btnAggrega" press="onAggrega" tooltip="{i18n>AggregaTooltip}"/>
+                    <Button icon="sap-icon://disconnected" type="Reject" text="{i18n>Disaggrega}" id="btnDisaggrega" press="onDisaggrega" tooltip="{i18n>DisaggregaTooltip}"/>
+                    <Button icon="sap-icon://paper-plane" type="Emphasized" text="{i18n>SendGEOCALL}" id="btnSendGEOCALL" press="onSendGEOCALL" tooltip="{i18n>SendGEOCALLTooltip}"/>
+                  </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                      <Column width="10em" id="col1" app:property="Napp"><Text text="{i18n>Napp}"/></Column>
+                      <Column width="10em" id="col3" app:property="IndexPmo"><Text text="{i18n>IndexPmo}"/></Column>
+                      <Column width="25em" id="col5" app:property="Impianto"><Text text="{i18n>Impianto}"/></Column>
+                      <Column width="10em" id="col7" app:property="NumOrdAttivo"><Text text="{i18n>NumOrdAttivo}"/></Column>
+                      <Column width="10em" id="col9" app:property="TipoOrdine"><Text text="{i18n>TipoOrdine}"/></Column>
+                      <Column width="10em" id="col11" app:property="StComponente"><Text text="{i18n>StComponente}"/></Column>
+                      <Column width="10em" id="col13" app:property="DesComponente"><Text text="{i18n>DesComponente}"/></Column>
+                      <Column width="10em" id="col15" app:property="DesBreve"><Text text="{i18n>DesBreve}"/></Column>
+                      <Column width="10em" id="col17" app:property="DurataCiclo"><Text text="{i18n>DurataCiclo}"/></Column>
+                      <Column width="10em" id="col19" app:property="UltimaEsecuz"><Text text="{i18n>UltimaEsecuz}"/></Column>
+                      <Column width="10em" id="col21" app:property="Datpia"><Text text="{i18n>Datpia}"/></Column>
+                      <Column width="10em" id="col23" app:property="Ritardo"><Text text="{i18n>Ritardo}"/></Column>
+                      <Column width="10em" id="col25" app:property="Indisponibilita"><Text text="{i18n>Indisponibilita}"/></Column>
+                      <Column width="10em" id="col27" app:property="Priorita"><Text text="{i18n>Priorita}"/></Column>
+                      <Column width="10em" id="col29" app:property="FineCard"><Text text="{i18n>FineCard}"/></Column>
+                      <Column width="10em" id="col31" app:property="Sistema"><Text text="{i18n>Sistema}"/></Column>
+                      <Column width="10em" id="col33" app:property="Classe"><Text text="{i18n>Classe}"/></Column>
+                      <Column width="10em" id="col35" app:property="Azione"><Text text="{i18n>Azione}"/></Column>
+                      <Column width="10em" id="col37" app:property="TipoAggr"><Text text="{i18n>TipoAggr}"/></Column>
+                      <Column width="10em" id="col39" app:property="Scostamento"><Text text="{i18n>Scostamento}"/></Column>
+                      <Column width="10em" id="col41" app:property="Frequenza"><Text text="{i18n>Frequenza}"/></Column>
+                      <Column width="10em" id="col43" app:property="Destinatario"><Text text="{i18n>Destinatario}"/></Column>
+                      <Column width="10em" id="col45" app:property="TipoGestione"><Text text="{i18n>TipoGestione}"/></Column>
+                      <Column width="10em" id="col47" app:property="TipoGestione1"><Text text="{i18n>TipoGestione1}"/></Column>
+                      <Column width="10em" id="col49" app:property="TipoGestione2"><Text text="{i18n>TipoGestione2}"/></Column>
+                      <Column width="10em" id="col51" app:property="Cdl" visible="true" ><Text text="{i18n>Cdl}"/></Column>
+                      <Column width="10em" id="col53" app:property="Lstar"><Text text="{i18n>Lstar}"/></Column>
+                      <Column width="10em" id="col55" app:property="Num"><Text text="{i18n>Num}"/></Column>
+                      <Column width="10em" id="col57" app:property="Hper"><Text text="{i18n>Hper}"/></Column>
+                      <Column width="10em" id="col59" app:property="Persone" visible="false" ><Text text="{i18n>Persone}"/></Column>
+                      <Column width="10em" id="col61" app:property="Steus"><Text text="{i18n>Steus}"/></Column>
+                      <Column width="10em" id="col63" app:property="Toth"><Text text="{i18n>Toth}"/></Column>
+                      <Column width="10em" id="col67" app:property="IntegTxtEsteso"><Text text="{i18n>IntegTxtEsteso}"/></Column>
+                      <Column width="10em" id="col69" app:property="Documenti"><Text text="{i18n>Documenti}"/></Column>
+                      <Column width="10em" id="col71" app:property="FlagOdm"><Text text="{i18n>FlagOdm}"/></Column>
+                      <Column width="10em" id="col73" app:property="Criticita"><Text text="{i18n>Criticita}"/></Column>
+                      <Column width="10em" id="col75" app:property="Determinanza"><Text text="{i18n>Determinanza}"/></Column>
+                      <Column width="10em" id="col77" app:property="Differibile"><Text text="{i18n>Differibile}"/></Column>
+                      <Column width="10em" id="col79" app:property="Point"><Text text="{i18n>Point}"/></Column>
+                      <Column width="10em" id="col81" app:property="DefPm"><Text text="{i18n>DefPm}"/></Column>
+                      <Column width="10em" id="col83" app:property="PosPm"><Text text="{i18n>PosPm}"/></Column>
+                      <Column width="10em" id="col85" app:property="Caratt"><Text text="{i18n>Caratt}"/></Column>
+                      <Column width="10em" id="col87" app:property="Divisioneu"><Text text="{i18n>Divisioneu}"/></Column>
+                      <Column width="10em" id="col89" app:property="TipoAttivita"><Text text="{i18n>TipoAttivita}"/></Column>
+                      <Column width="10em" id="col91" app:property="TipoPmo"><Text text="{i18n>TipoPmo}"/></Column>
+                      <Column width="10em" id="col93" app:property="StatoOdm"><Text text="{i18n>StatoOdm}"/></Column>
+                      <Column width="15em" id="col95" app:property="EquipmentCompo"><Text text="{i18n>EquipmentCompo}"/></Column>
+                      <Column width="10em" id="col97" app:property="FlagMateriali" visible="false" ><Text text="{i18n>FlagMateriali}"/></Column>
+                      <Column width="10em" id="col99" app:property="FlagPrestazioni" visible="false" ><Text text="{i18n>FlagPrestazioni}"/></Column>
+                      <Column width="10em" id="col101" app:property="FlagCollective" visible="false" ><Text text="{i18n>FlagCollective}"/></Column>
+                      <Column width="10em" id="col103" app:property="Aggregatore" visible="false" ><Text text="{i18n>Aggregatore}"/></Column>
+                      <Column width="10em" id="col105" app:property="Percorso" visible="false" ><Text text="{i18n>Percorso}"/></Column>
+                      <Column width="10em" id="col107" app:property="Cdl1" visible="false" ><Text text="{i18n>Cdl1}"/></Column>
+                      <Column width="10em" id="col109" app:property="Lstar1" visible="false" ><Text text="{i18n>Lstar1}"/></Column>
+                      <Column width="10em" id="col111" app:property="Num1" visible="false" ><Text text="{i18n>Num1}"/></Column>
+                      <Column width="10em" id="col113" app:property="Hper1" visible="false" ><Text text="{i18n>Hper1}"/></Column>
+                      <Column width="10em" id="col115" app:property="Persone1" visible="false" ><Text text="{i18n>Persone1}"/></Column>
+                      <Column width="10em" id="col117" app:property="Steus1" visible="false" ><Text text="{i18n>Steus1}"/></Column>
+                      <Column width="10em" id="col119" app:property="Toth1" visible="false" ><Text text="{i18n>Toth1}"/></Column>
+                      <Column width="10em" id="col121" app:property="Cdl2" visible="false" ><Text text="{i18n>Cdl2}"/></Column>
+                      <Column width="10em" id="col123" app:property="Lstar2" visible="false" ><Text text="{i18n>Lstar2}"/></Column>
+                      <Column width="10em" id="col125" app:property="Num2" visible="false" ><Text text="{i18n>Num2}"/></Column>
+                      <Column width="10em" id="col127" app:property="Hper2" visible="false" ><Text text="{i18n>Hper2}"/></Column>
+                      <Column width="10em" id="col129" app:property="Persone2" visible="false" ><Text text="{i18n>Persone2}"/></Column>
+                      <Column width="10em" id="col131" app:property="Steus2" visible="false" ><Text text="{i18n>Steus2}"/></Column>
+                      <Column width="10em" id="col133" app:property="Toth2" visible="false" ><Text text="{i18n>Toth2}"/></Column>
+                      <Column width="10em" id="col135" app:property="Cdl3" visible="false" ><Text text="{i18n>Cdl3}"/></Column>
+                      <Column width="10em" id="col137" app:property="Lstar3" visible="false" ><Text text="{i18n>Lstar3}"/></Column>
+                      <Column width="10em" id="col139" app:property="Num3" visible="false" ><Text text="{i18n>Num3}"/></Column>
+                      <Column width="10em" id="col141" app:property="Hper3" visible="false" ><Text text="{i18n>Hper3}"/></Column>
+                      <Column width="10em" id="col143" app:property="Persone3" visible="false" ><Text text="{i18n>Persone3}"/></Column>
+                      <Column width="10em" id="col145" app:property="Steus3" visible="false" ><Text text="{i18n>Steus3}"/></Column>
+                      <Column width="10em" id="col147" app:property="Toth3" visible="false" ><Text text="{i18n>Toth3}"/></Column>
+                      <Column width="10em" id="col149" app:property="Cdl4" visible="false" ><Text text="{i18n>Cdl4}"/></Column>
+                      <Column width="10em" id="col151" app:property="Lstar4" visible="false" ><Text text="{i18n>Lstar4}"/></Column>
+                      <Column width="10em" id="col153" app:property="Num4" visible="false" ><Text text="{i18n>Num4}"/></Column>
+                      <Column width="10em" id="col155" app:property="Hper4" visible="false" ><Text text="{i18n>Hper4}"/></Column>
+                      <Column width="10em" id="col157" app:property="Persone4" visible="false" ><Text text="{i18n>Persone4}"/></Column>
+                      <Column width="10em" id="col159" app:property="Steus4" visible="false" ><Text text="{i18n>Steus4}"/></Column>
+                      <Column width="10em" id="col161" app:property="Toth4" visible="false" ><Text text="{i18n>Toth4}"/></Column>
+                      <Column width="10em" id="col163" app:property="Cdl5" visible="false" ><Text text="{i18n>Cdl5}"/></Column>
+                      <Column width="10em" id="col165" app:property="Lstar5" visible="false" ><Text text="{i18n>Lstar5}"/></Column>
+                      <Column width="10em" id="col167" app:property="Num5" visible="false" ><Text text="{i18n>Num5}"/></Column>
+                      <Column width="10em" id="col169" app:property="Hper5" visible="false" ><Text text="{i18n>Hper5}"/></Column>
+                      <Column width="10em" id="col171" app:property="Persone5" visible="false" ><Text text="{i18n>Persone5}"/></Column>
+                      <Column width="10em" id="col173" app:property="Steus5" visible="false" ><Text text="{i18n>Steus5}"/></Column>
+                      <Column width="10em" id="col175" app:property="Toth5" visible="false" ><Text text="{i18n>Toth5}"/></Column>
 
-                            <fb:FilterGroupItem id="descrizioneComponente" visible="true" groupName="__$INTERNAL$" name="dc" label="{i18n>DescrizioneComponente}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <Input type="Text" value="{sFilter>/DescrizioneComponente}" maxLength="80"/>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                  </columns>
+                  <items>
+                      <ColumnListItem vAlign="Middle" type="Active" press="onPressLine">
+                          <cells>
+                              <Text text="{mManutenzione>Napp}"/>
+                              <Text text="{ parts:[{path:'mManutenzione>IndexPmo'}], formatter: '.LocalFormatter.alphaOutput'}"/>
+                              <Text text="{mManutenzione>Impianto}"/>
+                              <Text text="{mManutenzione>NumOrdAttivo}"/>
+                              <Text text="{mManutenzione>TipoOrdine}"/>
+                              <Text text="{mManutenzione>StComponente}"/>
+                              <Text text="{mManutenzione>DesComponente}"/>
+                              <Text text="{mManutenzione>DesBreve}"/>
+                              <Text text="{mManutenzione>DurataCiclo}"/>
+                              <Text text="{ parts:[{path:'mManutenzione>UltimaEsecuz'}], formatter: '.LocalFormatter.formatDate'}"/>
+                              <Text text="{ parts:[{path:'mManutenzione>Datpia'}], formatter: '.LocalFormatter.formatDate'}"/>
+                              <Text text="{mManutenzione>Ritardo}"/>
+                              <Text text="{mManutenzione>Indisponibilita}"/>
+                              <Text text="{mManutenzione>Priorita}"/>
+                              <Text text="{ parts:[{path:'mManutenzione>FineCard'}], formatter: '.LocalFormatter.formatDate'}"/>
+                              <Text text="{mManutenzione>Sistema}"/>
+                              <Text text="{mManutenzione>Classe}"/>
+                              <Text text="{mManutenzione>Azione}"/>
+                              <Text text="{mManutenzione>TipoAggr}"/>
+                              <Text text="{mManutenzione>Scostamento}"/>
+                              <Text text="{mManutenzione>Frequenza}"/>
+                              <Text text="{mManutenzione>Destinatario}"/>
+                              <Text text="{mManutenzione>TipoGestione}"/>
+                              <Text text="{mManutenzione>TipoGestione1}"/>
+                              <Text text="{mManutenzione>TipoGestione2}"/>
+                              <Text text="{mManutenzione>Cdl}"/>
+                              <Text text="{mManutenzione>Lstar}"/>
+                              <Text text="{mManutenzione>Num}"/>
+                              <Text text="{mManutenzione>Hper}"/>
+                              <Text text="{mManutenzione>Persone}"/>
+                              <Text text="{mManutenzione>Steus}"/>
+                              <Text text="{mManutenzione>Toth}"/>
+                              <Button icon="sap-icon://document-text" type="Transparent" press="handleTestoView" visible="{ parts:[{path:'mManutenzione>IntegTxtEsteso'}], formatter: '.LocalFormatter.formatAttivo'}" />
 
-                            <fb:FilterGroupItem id="centroDiLavoro" visible="true" groupName="__$INTERNAL$" name="cdl" label="{i18n>CentroDiLavoro}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                     <ComboBox valueStateText="{i18n>valueState} {i18n>CENTRO_LAVORO}" showSecondaryValues="true" items="{ path: 'sHelp>/CENTRO_LAVORO', length:2500 }" selectedKey="{sFilter>/CentroDiLavoro}">
-                                              <core:ListItem key="{sHelp>Arbpl}" text="{sHelp>Arbpl}" additionalText="{sHelp>Werks} - {sHelp>Destinatario}"/>
-                                            </ComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                              <Text text="{mManutenzione>Documenti}"/>
+                              <core:Icon src="{ parts:[{path:'mManutenzione>FlagOdm'}], formatter: '.LocalFormatter.formatX'}" color="{ parts:[{path:'mManutenzione>FlagOdm'}], formatter: '.LocalFormatter.formatColor'}" />
+                              <core:Icon src="{ parts:[{path:'mManutenzione>Criticita'}], formatter: '.LocalFormatter.formatX'}" color="{ parts:[{path:'mManutenzione>Criticita'}], formatter: '.LocalFormatter.formatColor'}" />
+                              <core:Icon src="{ parts:[{path:'mManutenzione>Determinanza'}], formatter: '.LocalFormatter.formatX'}" color="{ parts:[{path:'mManutenzione>Determinanza'}], formatter: '.LocalFormatter.formatColor'}" />
+                              <core:Icon src="{ parts:[{path:'mManutenzione>Differibile'}], formatter: '.LocalFormatter.formatX'}" color="{ parts:[{path:'mManutenzione>Differibile'}], formatter: '.LocalFormatter.formatColor'}" />
 
-                            <fb:FilterGroupItem id="destinatario" visible="true" groupName="__$INTERNAL$" name="dest" label="{i18n>Destinatario}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                     <ComboBox valueStateText="{i18n>valueState} {i18n>Destinatario}" showSecondaryValues="true" items="{ path: 'sHelp>/CENTRO_LAVORO', length:2500 }" selectedKey="{sFilter>/Destinatario}">
-                                        <core:ListItem key="{sHelp>Destinatario}" text="{sHelp>Destinatario}" additionalText="{sHelp>Werks} - {sHelp>Arbpl}"/>
-                                      </ComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                              
+                              <Text text="{mManutenzione>Point}"/>
+                              <Text text="{mManutenzione>DefPm}"/>
+                              <Text text="{mManutenzione>PosPm}"/>
+                              <Text text="{mManutenzione>Caratt}"/>
+                              <Text text="{mManutenzione>Divisioneu}"/>
+                              <Text text="{mManutenzione>TipoAttivita}"/>
+                              <Text text="{mManutenzione>TipoPmo}"/>
+                              <Text text="{mManutenzione>StatoOdm}"/>
+                              <Text text="{mManutenzione>EquipmentCompo}"/>
+                              <Text text="{mManutenzione>FlagMateriali}"/>
+                              <Text text="{mManutenzione>FlagPrestazioni}"/>
+                              <Text text="{mManutenzione>FlagCollective}"/>
+                              <Text text="{mManutenzione>Aggregatore}"/>
+                              <Text text="{mManutenzione>Percorso}"/>
+                              <Text text="{mManutenzione>Cdl1}"/>
+                              <Text text="{mManutenzione>Lstar1}"/>
+                              <Text text="{mManutenzione>Num1}"/>
+                              <Text text="{mManutenzione>Hper1}"/>
+                              <Text text="{mManutenzione>Persone1}"/>
+                              <Text text="{mManutenzione>Steus1}"/>
+                              <Text text="{mManutenzione>Toth1}"/>
+                              <Text text="{mManutenzione>Cdl2}"/>
+                              <Text text="{mManutenzione>Lstar2}"/>
+                              <Text text="{mManutenzione>Num2}"/>
+                              <Text text="{mManutenzione>Hper2}"/>
+                              <Text text="{mManutenzione>Persone2}"/>
+                              <Text text="{mManutenzione>Steus2}"/>
+                              <Text text="{mManutenzione>Toth2}"/>
+                              <Text text="{mManutenzione>Cdl3}"/>
+                              <Text text="{mManutenzione>Lstar3}"/>
+                              <Text text="{mManutenzione>Num3}"/>
+                              <Text text="{mManutenzione>Hper3}"/>
+                              <Text text="{mManutenzione>Persone3}"/>
+                              <Text text="{mManutenzione>Steus3}"/>
+                              <Text text="{mManutenzione>Toth3}"/>
+                              <Text text="{mManutenzione>Cdl4}"/>
+                              <Text text="{mManutenzione>Lstar4}"/>
+                              <Text text="{mManutenzione>Num4}"/>
+                              <Text text="{mManutenzione>Hper4}"/>
+                              <Text text="{mManutenzione>Persone4}"/>
+                              <Text text="{mManutenzione>Steus4}"/>
+                              <Text text="{mManutenzione>Toth4}"/>
+                              <Text text="{mManutenzione>Cdl5}"/>
+                              <Text text="{mManutenzione>Lstar5}"/>
+                              <Text text="{mManutenzione>Num5}"/>
+                              <Text text="{mManutenzione>Hper5}"/>
+                              <Text text="{mManutenzione>Persone5}"/>
+                              <Text text="{mManutenzione>Steus5}"/>
+                              <Text text="{mManutenzione>Toth5}"/>
 
-                            <fb:FilterGroupItem id="percorso" visible="true" groupName="__$INTERNAL$" name="perc" label="{i18n>Percorso}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <Input type="Text" value="{sFilter>/Percorso}" maxLength="15"/>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-
-                            <fb:FilterGroupItem id="tipoGestione" visible="true" groupName="__$INTERNAL$" name="tg" label="{i18n>TipoGestione}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                     <ComboBox showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_GESTIONE' }" selectedKey="{sFilter>/TipoGestione}">
-                                          <core:ListItem key="{sHelp>TipoGestione}" text="{sHelp>TipoGestione}" additionalText="{sHelp>Divisione} - {sHelp>DesTipoGest}"/>
-                                      </ComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-
-                            <fb:FilterGroupItem id="finalita" visible="true" groupName="__$INTERNAL$" name="fin" label="{i18n>Finalita}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <ComboBox showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_GESTIONE_1' }" selectedKey="{sFilter>/Finalita}">
-                                                      <core:ListItem key="{sHelp>TipoGestione1}" text="{sHelp>TipoGestione1}" additionalText="{sHelp>Divisione} - {sHelp>DesTipoGest1}"/>
-                                                  </ComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-
-                            <fb:FilterGroupItem id="grupControllo" visible="true" groupName="__$INTERNAL$" name="gc" label="{i18n>GrupControllo}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                     <ComboBox showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_GESTIONE_2' }" selectedKey="{sFilter>/GrupControllo}">
-                                        <core:ListItem key="{sHelp>TipoGestione2}" text="{sHelp>TipoGestione2}" additionalText="{sHelp>Divisione} - {sHelp>DesTipoGest2}"/>
-                                      </ComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-
-                            <fb:FilterGroupItem id="collective" visible="true" groupName="__$INTERNAL$" name="col" label="{i18n>Collective}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                                <fb:control>
-                                    <Select xmlns="sap.m" selectedKey="{sFilter>/Collective}">
-                                        <items>
-                                        <core:ListItem xmlns:core="sap.ui.core" key="" text="" />
-                                        <core:ListItem xmlns:core="sap.ui.core" key="X" text="X" />
-                                        </items>
-                                      </Select>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-
-                        </fb:filterGroupItems>
-                    </fb:FilterBar>
-
-                    <OverflowToolbar style="Clear" class="sapUiMediumMarginTop">
-                        <Button xmlns="sap.m" icon="sap-icon://history" text="{i18n>ImpostaData}" id="btnImpostaData" press="onImpostaData" tooltip="{i18n>ImpostaDataTooltip}"/>
-                        <Button xmlns="sap.m" icon="sap-icon://delete" text="{i18n>CancellaData}" id="btnCancellaData" press="onCancellaData" tooltip="{i18n>CancellaDataTooltip}"/>
-                        <Button xmlns="sap.m" icon="sap-icon://create" text="{i18n>CreaODM}" id="btnCreaODM" press="onCreaODM" tooltip="{i18n>CreaODMTooltip}"/>
-                        <ToolbarSpacer/>
-                        <Button xmlns="sap.m" icon="sap-icon://flag" text="{i18n>RilascioODM}" id="btnRilascioODM" press="onRilascioODM" tooltip="{i18n>RilascioODMTooltip}"/>
-                        <Button xmlns="sap.m" icon="sap-icon://print" text="{i18n>StampaDoc}" id="btnStampaDoc" press="onStampaDoc" tooltip="{i18n>StampaDocTooltip}"/>
-                        <Button xmlns="sap.m" icon="sap-icon://action-settings" text="{i18n>Consuntivazione}" id="btnConsuntivazione" press="onConsuntivazione" tooltip="{i18n>ConsuntivazioneTooltip}"/>
-                    </OverflowToolbar>
-                </f:content>
-            </f:DynamicPageHeader>
-        </f:header>
-        <f:content>
-            <ScrollContainer width="100%" height="100%" vertical="true" horizontal="true">
-                <Table id="tbManutenzione" items="{path: 'mManutenzione>/'}"  mode="MultiSelect" sticky="HeaderToolbar,ColumnHeaders">
-                  <columns>
-                        <Column width="10em" id="col1" app:property="Napp"><Text text="{i18n>Napp}"/></Column>
-                        <Column width="10em" id="col3" app:property="IndexPmo"><Text text="{i18n>IndexPmo}"/></Column>
-                        <Column width="25em" id="col5" app:property="Impianto"><Text text="{i18n>Impianto}"/></Column>
-                        <Column width="10em" id="col7" app:property="NumOrdAttivo"><Text text="{i18n>NumOrdAttivo}"/></Column>
-                        <Column width="10em" id="col9" app:property="TipoOrdine"><Text text="{i18n>TipoOrdine}"/></Column>
-                        <Column width="10em" id="col11" app:property="StComponente"><Text text="{i18n>StComponente}"/></Column>
-                        <Column width="10em" id="col13" app:property="DesComponente"><Text text="{i18n>DesComponente}"/></Column>
-                        <Column width="10em" id="col15" app:property="DesBreve"><Text text="{i18n>DesBreve}"/></Column>
-                        <Column width="10em" id="col17" app:property="DurataCiclo"><Text text="{i18n>DurataCiclo}"/></Column>
-                        <Column width="10em" id="col19" app:property="UltimaEsecuz"><Text text="{i18n>UltimaEsecuz}"/></Column>
-                        <Column width="10em" id="col21" app:property="Datpia"><Text text="{i18n>Datpia}"/></Column>
-                        <Column width="10em" id="col23" app:property="Ritardo"><Text text="{i18n>Ritardo}"/></Column>
-                        <Column width="10em" id="col25" app:property="Indisponibilita"><Text text="{i18n>Indisponibilita}"/></Column>
-                        <Column width="10em" id="col27" app:property="Priorita"><Text text="{i18n>Priorita}"/></Column>
-                        <Column width="10em" id="col29" app:property="FineCard"><Text text="{i18n>FineCard}"/></Column>
-                        <Column width="10em" id="col31" app:property="Sistema"><Text text="{i18n>Sistema}"/></Column>
-                        <Column width="10em" id="col33" app:property="Classe"><Text text="{i18n>Classe}"/></Column>
-                        <Column width="10em" id="col35" app:property="Azione"><Text text="{i18n>Azione}"/></Column>
-                        <Column width="10em" id="col37" app:property="TipoAggr"><Text text="{i18n>TipoAggr}"/></Column>
-                        <Column width="10em" id="col39" app:property="Scostamento"><Text text="{i18n>Scostamento}"/></Column>
-                        <Column width="10em" id="col41" app:property="Frequenza"><Text text="{i18n>Frequenza}"/></Column>
-                        <Column width="10em" id="col43" app:property="Destinatario"><Text text="{i18n>Destinatario}"/></Column>
-                        <Column width="10em" id="col45" app:property="TipoGestione"><Text text="{i18n>TipoGestione}"/></Column>
-                        <Column width="10em" id="col47" app:property="TipoGestione1"><Text text="{i18n>TipoGestione1}"/></Column>
-                        <Column width="10em" id="col49" app:property="TipoGestione2"><Text text="{i18n>TipoGestione2}"/></Column>
-                        <Column width="10em" id="col51" app:property="Cdl" visible="true" ><Text text="{i18n>Cdl}"/></Column>
-                        <Column width="10em" id="col53" app:property="Lstar"><Text text="{i18n>Lstar}"/></Column>
-                        <Column width="10em" id="col55" app:property="Num"><Text text="{i18n>Num}"/></Column>
-                        <Column width="10em" id="col57" app:property="Hper"><Text text="{i18n>Hper}"/></Column>
-                        <Column width="10em" id="col59" app:property="Persone" visible="false" ><Text text="{i18n>Persone}"/></Column>
-                        <Column width="10em" id="col61" app:property="Steus"><Text text="{i18n>Steus}"/></Column>
-                        <Column width="10em" id="col63" app:property="Toth"><Text text="{i18n>Toth}"/></Column>
-                        <Column width="10em" id="col67" app:property="IntegTxtEsteso"><Text text="{i18n>IntegTxtEsteso}"/></Column>
-                        <Column width="10em" id="col69" app:property="Documenti"><Text text="{i18n>Documenti}"/></Column>
-                        <Column width="10em" id="col71" app:property="FlagOdm"><Text text="{i18n>FlagOdm}"/></Column>
-                        <Column width="10em" id="col73" app:property="Criticita"><Text text="{i18n>Criticita}"/></Column>
-                        <Column width="10em" id="col75" app:property="Determinanza"><Text text="{i18n>Determinanza}"/></Column>
-                        <Column width="10em" id="col77" app:property="Differibile"><Text text="{i18n>Differibile}"/></Column>
-                        <Column width="10em" id="col79" app:property="Point"><Text text="{i18n>Point}"/></Column>
-                        <Column width="10em" id="col81" app:property="DefPm"><Text text="{i18n>DefPm}"/></Column>
-                        <Column width="10em" id="col83" app:property="PosPm"><Text text="{i18n>PosPm}"/></Column>
-                        <Column width="10em" id="col85" app:property="Caratt"><Text text="{i18n>Caratt}"/></Column>
-                        <Column width="10em" id="col87" app:property="Divisioneu"><Text text="{i18n>Divisioneu}"/></Column>
-                        <Column width="10em" id="col89" app:property="TipoAttivita"><Text text="{i18n>TipoAttivita}"/></Column>
-                        <Column width="10em" id="col91" app:property="TipoPmo"><Text text="{i18n>TipoPmo}"/></Column>
-                        <Column width="10em" id="col93" app:property="StatoOdm"><Text text="{i18n>StatoOdm}"/></Column>
-                        <Column width="15em" id="col95" app:property="EquipmentCompo"><Text text="{i18n>EquipmentCompo}"/></Column>
-                        <Column width="10em" id="col97" app:property="FlagMateriali" visible="false" ><Text text="{i18n>FlagMateriali}"/></Column>
-                        <Column width="10em" id="col99" app:property="FlagPrestazioni" visible="false" ><Text text="{i18n>FlagPrestazioni}"/></Column>
-                        <Column width="10em" id="col101" app:property="FlagCollective" visible="false" ><Text text="{i18n>FlagCollective}"/></Column>
-                        <Column width="10em" id="col103" app:property="Aggregatore" visible="false" ><Text text="{i18n>Aggregatore}"/></Column>
-                        <Column width="10em" id="col105" app:property="Percorso" visible="false" ><Text text="{i18n>Percorso}"/></Column>
-                        <Column width="10em" id="col107" app:property="Cdl1" visible="false" ><Text text="{i18n>Cdl1}"/></Column>
-                        <Column width="10em" id="col109" app:property="Lstar1" visible="false" ><Text text="{i18n>Lstar1}"/></Column>
-                        <Column width="10em" id="col111" app:property="Num1" visible="false" ><Text text="{i18n>Num1}"/></Column>
-                        <Column width="10em" id="col113" app:property="Hper1" visible="false" ><Text text="{i18n>Hper1}"/></Column>
-                        <Column width="10em" id="col115" app:property="Persone1" visible="false" ><Text text="{i18n>Persone1}"/></Column>
-                        <Column width="10em" id="col117" app:property="Steus1" visible="false" ><Text text="{i18n>Steus1}"/></Column>
-                        <Column width="10em" id="col119" app:property="Toth1" visible="false" ><Text text="{i18n>Toth1}"/></Column>
-                        <Column width="10em" id="col121" app:property="Cdl2" visible="false" ><Text text="{i18n>Cdl2}"/></Column>
-                        <Column width="10em" id="col123" app:property="Lstar2" visible="false" ><Text text="{i18n>Lstar2}"/></Column>
-                        <Column width="10em" id="col125" app:property="Num2" visible="false" ><Text text="{i18n>Num2}"/></Column>
-                        <Column width="10em" id="col127" app:property="Hper2" visible="false" ><Text text="{i18n>Hper2}"/></Column>
-                        <Column width="10em" id="col129" app:property="Persone2" visible="false" ><Text text="{i18n>Persone2}"/></Column>
-                        <Column width="10em" id="col131" app:property="Steus2" visible="false" ><Text text="{i18n>Steus2}"/></Column>
-                        <Column width="10em" id="col133" app:property="Toth2" visible="false" ><Text text="{i18n>Toth2}"/></Column>
-                        <Column width="10em" id="col135" app:property="Cdl3" visible="false" ><Text text="{i18n>Cdl3}"/></Column>
-                        <Column width="10em" id="col137" app:property="Lstar3" visible="false" ><Text text="{i18n>Lstar3}"/></Column>
-                        <Column width="10em" id="col139" app:property="Num3" visible="false" ><Text text="{i18n>Num3}"/></Column>
-                        <Column width="10em" id="col141" app:property="Hper3" visible="false" ><Text text="{i18n>Hper3}"/></Column>
-                        <Column width="10em" id="col143" app:property="Persone3" visible="false" ><Text text="{i18n>Persone3}"/></Column>
-                        <Column width="10em" id="col145" app:property="Steus3" visible="false" ><Text text="{i18n>Steus3}"/></Column>
-                        <Column width="10em" id="col147" app:property="Toth3" visible="false" ><Text text="{i18n>Toth3}"/></Column>
-                        <Column width="10em" id="col149" app:property="Cdl4" visible="false" ><Text text="{i18n>Cdl4}"/></Column>
-                        <Column width="10em" id="col151" app:property="Lstar4" visible="false" ><Text text="{i18n>Lstar4}"/></Column>
-                        <Column width="10em" id="col153" app:property="Num4" visible="false" ><Text text="{i18n>Num4}"/></Column>
-                        <Column width="10em" id="col155" app:property="Hper4" visible="false" ><Text text="{i18n>Hper4}"/></Column>
-                        <Column width="10em" id="col157" app:property="Persone4" visible="false" ><Text text="{i18n>Persone4}"/></Column>
-                        <Column width="10em" id="col159" app:property="Steus4" visible="false" ><Text text="{i18n>Steus4}"/></Column>
-                        <Column width="10em" id="col161" app:property="Toth4" visible="false" ><Text text="{i18n>Toth4}"/></Column>
-                        <Column width="10em" id="col163" app:property="Cdl5" visible="false" ><Text text="{i18n>Cdl5}"/></Column>
-                        <Column width="10em" id="col165" app:property="Lstar5" visible="false" ><Text text="{i18n>Lstar5}"/></Column>
-                        <Column width="10em" id="col167" app:property="Num5" visible="false" ><Text text="{i18n>Num5}"/></Column>
-                        <Column width="10em" id="col169" app:property="Hper5" visible="false" ><Text text="{i18n>Hper5}"/></Column>
-                        <Column width="10em" id="col171" app:property="Persone5" visible="false" ><Text text="{i18n>Persone5}"/></Column>
-                        <Column width="10em" id="col173" app:property="Steus5" visible="false" ><Text text="{i18n>Steus5}"/></Column>
-                        <Column width="10em" id="col175" app:property="Toth5" visible="false" ><Text text="{i18n>Toth5}"/></Column>
-
-                    </columns>
-                    <items>
-                        <ColumnListItem vAlign="Middle" type="Active" press="onPressLine">
-                            <cells>
-                                <Text text="{mManutenzione>Napp}"/>
-                                <Text text="{ parts:[{path:'mManutenzione>IndexPmo'}], formatter: '.LocalFormatter.alphaOutput'}"/>
-                                <Text text="{mManutenzione>Impianto}"/>
-                                <Text text="{mManutenzione>NumOrdAttivo}"/>
-                                <Text text="{mManutenzione>TipoOrdine}"/>
-                                <Text text="{mManutenzione>StComponente}"/>
-                                <Text text="{mManutenzione>DesComponente}"/>
-                                <Text text="{mManutenzione>DesBreve}"/>
-                                <Text text="{mManutenzione>DurataCiclo}"/>
-                                <Text text="{ parts:[{path:'mManutenzione>UltimaEsecuz'}], formatter: '.LocalFormatter.formatDate'}"/>
-                                <Text text="{ parts:[{path:'mManutenzione>Datpia'}], formatter: '.LocalFormatter.formatDate'}"/>
-                                <Text text="{mManutenzione>Ritardo}"/>
-                                <Text text="{mManutenzione>Indisponibilita}"/>
-                                <Text text="{mManutenzione>Priorita}"/>
-                                <Text text="{ parts:[{path:'mManutenzione>FineCard'}], formatter: '.LocalFormatter.formatDate'}"/>
-                                <Text text="{mManutenzione>Sistema}"/>
-                                <Text text="{mManutenzione>Classe}"/>
-                                <Text text="{mManutenzione>Azione}"/>
-                                <Text text="{mManutenzione>TipoAggr}"/>
-                                <Text text="{mManutenzione>Scostamento}"/>
-                                <Text text="{mManutenzione>Frequenza}"/>
-                                <Text text="{mManutenzione>Destinatario}"/>
-                                <Text text="{mManutenzione>TipoGestione}"/>
-                                <Text text="{mManutenzione>TipoGestione1}"/>
-                                <Text text="{mManutenzione>TipoGestione2}"/>
-                                <Text text="{mManutenzione>Cdl}"/>
-                                <Text text="{mManutenzione>Lstar}"/>
-                                <Text text="{mManutenzione>Num}"/>
-                                <Text text="{mManutenzione>Hper}"/>
-                                <Text text="{mManutenzione>Persone}"/>
-                                <Text text="{mManutenzione>Steus}"/>
-                                <Text text="{mManutenzione>Toth}"/>
-                                <Button icon="sap-icon://document-text" type="Transparent" press="handleTestoView" visible="{ parts:[{path:'mManutenzione>IntegTxtEsteso'}], formatter: '.LocalFormatter.formatAttivo'}" />
-
-                                <Text text="{mManutenzione>Documenti}"/>
-                                <core:Icon src="{ parts:[{path:'mManutenzione>FlagOdm'}], formatter: '.LocalFormatter.formatX'}" color="{ parts:[{path:'mManutenzione>FlagOdm'}], formatter: '.LocalFormatter.formatColor'}" />
-                                <core:Icon src="{ parts:[{path:'mManutenzione>Criticita'}], formatter: '.LocalFormatter.formatX'}" color="{ parts:[{path:'mManutenzione>Criticita'}], formatter: '.LocalFormatter.formatColor'}" />
-                                <core:Icon src="{ parts:[{path:'mManutenzione>Determinanza'}], formatter: '.LocalFormatter.formatX'}" color="{ parts:[{path:'mManutenzione>Determinanza'}], formatter: '.LocalFormatter.formatColor'}" />
-                                <core:Icon src="{ parts:[{path:'mManutenzione>Differibile'}], formatter: '.LocalFormatter.formatX'}" color="{ parts:[{path:'mManutenzione>Differibile'}], formatter: '.LocalFormatter.formatColor'}" />
-
-                                
-                                <Text text="{mManutenzione>Point}"/>
-                                <Text text="{mManutenzione>DefPm}"/>
-                                <Text text="{mManutenzione>PosPm}"/>
-                                <Text text="{mManutenzione>Caratt}"/>
-                                <Text text="{mManutenzione>Divisioneu}"/>
-                                <Text text="{mManutenzione>TipoAttivita}"/>
-                                <Text text="{mManutenzione>TipoPmo}"/>
-                                <Text text="{mManutenzione>StatoOdm}"/>
-                                <Text text="{mManutenzione>EquipmentCompo}"/>
-                                <Text text="{mManutenzione>FlagMateriali}"/>
-                                <Text text="{mManutenzione>FlagPrestazioni}"/>
-                                <Text text="{mManutenzione>FlagCollective}"/>
-                                <Text text="{mManutenzione>Aggregatore}"/>
-                                <Text text="{mManutenzione>Percorso}"/>
-                                <Text text="{mManutenzione>Cdl1}"/>
-                                <Text text="{mManutenzione>Lstar1}"/>
-                                <Text text="{mManutenzione>Num1}"/>
-                                <Text text="{mManutenzione>Hper1}"/>
-                                <Text text="{mManutenzione>Persone1}"/>
-                                <Text text="{mManutenzione>Steus1}"/>
-                                <Text text="{mManutenzione>Toth1}"/>
-                                <Text text="{mManutenzione>Cdl2}"/>
-                                <Text text="{mManutenzione>Lstar2}"/>
-                                <Text text="{mManutenzione>Num2}"/>
-                                <Text text="{mManutenzione>Hper2}"/>
-                                <Text text="{mManutenzione>Persone2}"/>
-                                <Text text="{mManutenzione>Steus2}"/>
-                                <Text text="{mManutenzione>Toth2}"/>
-                                <Text text="{mManutenzione>Cdl3}"/>
-                                <Text text="{mManutenzione>Lstar3}"/>
-                                <Text text="{mManutenzione>Num3}"/>
-                                <Text text="{mManutenzione>Hper3}"/>
-                                <Text text="{mManutenzione>Persone3}"/>
-                                <Text text="{mManutenzione>Steus3}"/>
-                                <Text text="{mManutenzione>Toth3}"/>
-                                <Text text="{mManutenzione>Cdl4}"/>
-                                <Text text="{mManutenzione>Lstar4}"/>
-                                <Text text="{mManutenzione>Num4}"/>
-                                <Text text="{mManutenzione>Hper4}"/>
-                                <Text text="{mManutenzione>Persone4}"/>
-                                <Text text="{mManutenzione>Steus4}"/>
-                                <Text text="{mManutenzione>Toth4}"/>
-                                <Text text="{mManutenzione>Cdl5}"/>
-                                <Text text="{mManutenzione>Lstar5}"/>
-                                <Text text="{mManutenzione>Num5}"/>
-                                <Text text="{mManutenzione>Hper5}"/>
-                                <Text text="{mManutenzione>Persone5}"/>
-                                <Text text="{mManutenzione>Steus5}"/>
-                                <Text text="{mManutenzione>Toth5}"/>
-
-                            </cells>
-                        </ColumnListItem>
-                    </items>
-                </Table>
-            </ScrollContainer>
-        </f:content>
-        <f:footer>
-            <OverflowToolbar>
-                <ToolbarSpacer/>
-                <ToolbarSpacer/>
-            </OverflowToolbar>
-        </f:footer>
-         <f:dependents>
-      <core:Fragment fragmentName="PM030.APP4.fragment.popTestoEstesoView" type="XML"></core:Fragment>
-      <core:Fragment fragmentName="PM030.APP4.fragment.popAggregatore" type="XML"></core:Fragment>
-    </f:dependents>
-    </f:DynamicPage>
+                          </cells>
+                      </ColumnListItem>
+                  </items>
+              </Table>
+          </ScrollContainer>
+      </f:content>
+      <f:footer>
+          <OverflowToolbar>
+              <ToolbarSpacer/>
+              <ToolbarSpacer/>
+          </OverflowToolbar>
+      </f:footer>
+        <f:dependents>
+    <core:Fragment fragmentName="PM030.APP4.fragment.popTestoEstesoView" type="XML"></core:Fragment>
+    <core:Fragment fragmentName="PM030.APP4.fragment.popAggregatore" type="XML"></core:Fragment>
+  </f:dependents>
+  </f:DynamicPage>
 </mvc:View>

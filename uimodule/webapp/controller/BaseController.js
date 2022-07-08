@@ -34,11 +34,11 @@ sap.ui.define([
       LocalFormatter: LocalFormatter,
       underscore: underscore,
       /**
-           * Convenience method for getting the view model by name in every controller of the application.
-           * @public
-           * @param {string} sName the model name
-           * @returns {sap.ui.model.Model} the model instance
-           */
+       * Convenience method for getting the view model by name in every controller of the application.
+       * @public
+       * @param {string} sName the model name
+       * @returns {sap.ui.model.Model} the model instance
+       */
       getModel: function (sName) {
         return this.getView().getModel(sName);
       },
@@ -204,7 +204,7 @@ sap.ui.define([
           });
         });
       },
-      _getTableIndexAzioni: function (Entity, Filters) {
+      _fetchDataIndexAzioni: function (Entity, Filters) {
         var xsoDataModelReport = this.getView().getModel();
         return new Promise(function (resolve, reject) {
           xsoDataModelReport.read(Entity, {
@@ -249,11 +249,12 @@ sap.ui.define([
           });
         });
       },
-      _getTable: function (Entity, Filters) {
+      _fetchData: function (Entity, Filters, Expand = false) {
         var xsoDataModelReport = this.getView().getModel();
         return new Promise(function (resolve, reject) {
           xsoDataModelReport.read(Entity, {
             filters: Filters,
+            ...(Expand && { urlParameters: { "$expand": Expand } }),
             success: function (oDataIn) {
               if (oDataIn.results !== undefined) {
                 resolve(oDataIn.results);
@@ -269,7 +270,7 @@ sap.ui.define([
           });
         });
       },
-      _getTableNoError: function (Entity, Filters) {
+      _fetchDataNoError: function (Entity, Filters) {
         var xsoDataModelReport = this.getView().getModel();
         return new Promise(function (resolve) {
           xsoDataModelReport.read(Entity, {
@@ -287,7 +288,7 @@ sap.ui.define([
           });
         });
       },
-      _getTableDistinct: function (Entity, Filters, Columns) {
+      _fetchDataDistinct: function (Entity, Filters, Columns) {
         var xsoDataModelReport = this.getView().getModel();
         return new Promise(function (resolve) {
           xsoDataModelReport.read(Entity, {

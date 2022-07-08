@@ -1,26 +1,139 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-  <Dialog id="popAggregatore" title="{i18n>popAggregatore}">
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:cards="sap.f.cards">
+  <Dialog
+      id="popAggregatore"
+      title="{i18n>popAggregatore}">
     <content>
-      <VBox class="sapUiSmallMargin">
-        <HBox height="4em">
-          <Text text="{i18n>pAggregatore}" textAlign="End" width="8em" class="sapUiSmallMarginEnd sapUiTinyMarginTop" />
-          <Input id="Aggregatore" enabled="false" />
-        </HBox>  
-        <HBox height="4em">
-          <Text text="{i18n>pDescrizione}" textAlign="End" width="8em" class="sapUiSmallMarginEnd sapUiTinyMarginTop" />
-          <Input id="descAggregatore" />
-        </HBox> 
-        <HBox height="15em">
-          <Text text="{i18n>pNote}" textAlign="End" width="8em" class="sapUiSmallMarginEnd sapUiTinyMarginTop" />
-          <TextArea id="vTextArea" showExceededText="true" maxLength="255" width="50em" height="15em" valueState="{= ${/value}.length > 255 ? 'Warning' : 'None' }"/>   
-        </HBox> 
-      </VBox>                            
+      <Carousel
+			height="auto"
+			pages="{
+				path: '/items'
+			}">
+			<customLayout>
+				<CarouselLayout visiblePagesCount="{/pagesCount}" />
+			</customLayout>
+            <f:Card>
+				<f:header>
+					<cards:Header
+						title="{undefined>IndexPmo}"
+						subtitle=""
+						iconSrc=""
+						iconDisplayShape="Square" />
+				</f:header>
+				<f:content>
+          <form:SimpleForm>
+            <Label text="{i18n>pAggregatore}" />
+            <Input enabled="false" value="{undefined>Aggregatore}"/>
+            <Label text="{i18n>pDescrizione}"/>
+            <Input value="{undefined>Descrizione}" />
+            <Label text="{i18n>pNote}"/>
+            <TextArea
+            showExceededText="true"
+            maxLength="255"
+            cols="30"
+            value="{undefined>Note}"
+            valueState="{= ${/value}.length > 255 ? 'Warning' : 'None' }" />
+          </form:SimpleForm>
+          <!-- <VBox class="sapUiSmallMargin">
+            <HBox height="4em">
+              <Text
+                  text=""
+                  textAlign="End"
+                  width="8em"
+                  class="sapUiSmallMarginEnd sapUiTinyMarginTop" />
+              <Input
+                  value="{}"
+                  enabled="false" />
+            </HBox>
+            <HBox height="4em">
+              <Text
+                  text="{i18n>pDescrizione}"
+                  textAlign="End"
+                  width="8em"
+                  class="sapUiSmallMarginEnd sapUiTinyMarginTop" />
+              <Input  />
+            </HBox>
+            <HBox height="15em">
+              <Text
+                  text="{i18n>pNote}"
+                  textAlign="End"
+                  width="8em"
+                  class="sapUiSmallMarginEnd sapUiTinyMarginTop" />
+              <TextArea
+                  id="vTextArea"
+                  showExceededText="true"
+                  maxLength="255"
+                  width="50em"
+                  height="15em"
+                  valueState="{= ${/value}.length > 255 ? 'Warning' : 'None' }" />
+            </HBox>
+          </VBox> -->
+					<!-- <l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<l:BlockLayout>
+							<l:BlockLayoutRow>
+								<l:BlockLayoutCell title="Main Information" width="1">
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Supplier:" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>SupplierName}" />
+									</HBox>
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Main Category:" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>MainCategory}" />
+									</HBox>
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Category:" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>Category}" />
+									</HBox>
+								</l:BlockLayoutCell>
+
+								<l:BlockLayoutCell title="Specifications" width="1">
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Width (cm)" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>Width}" />
+									</HBox>
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Height (cm)" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>Height}" />
+									</HBox>
+									<HBox class="sapUiTinyMarginBottom">
+										<Label text="Weight (kg)" />
+									</HBox>
+									<HBox class="sapUiSmallMarginBottom">
+										<Text text="{products>WeightMeasure}" />
+									</HBox>
+								</l:BlockLayoutCell>
+							</l:BlockLayoutRow>
+						</l:BlockLayout>
+					</l:VerticalLayout> -->
+				</f:content>
+			</f:Card>
+    </Carousel>
     </content>
     <beginButton>
-			<Button text="{i18n>Conferma}" type="Emphasized" press="onConfirmAgg"/>
-		</beginButton>
+      <Button
+          text="{i18n>Conferma}"
+          type="Emphasized"
+          press="onConfirmAgg" />
+    </beginButton>
     <endButton>
-        <Button text="{i18n>Annulla}" type="Emphasized" press="onCloseAgg"/>
+      <Button
+          text="{i18n>Annulla}"
+          type="Emphasized"
+          press="onCloseAgg" />
     </endButton>
-	</Dialog>
+  </Dialog>
 </core:FragmentDefinition>
