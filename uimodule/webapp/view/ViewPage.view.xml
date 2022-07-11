@@ -3,20 +3,18 @@
     <f:landmarkInfo>
           <f:DynamicPageAccessibleLandmarkInfo rootRole="Region" contentRole="Main" headerRole="Banner" rootLabel="{i18n>Overview_rootLabel}" contentLabel="{i18n>Overview_contentLabel}" headerLabel="{i18n>Overview_headerLabel}"/>
     </f:landmarkInfo>
-      <f:title >
-        <f:DynamicPageTitle>
-            <f:content>
-                <HBox height="100%" alignItems="Center" alignContent="Center" justifyContent="Center">
-                    <Title text="{i18n>TitoloOdm}"/>
-                </HBox>
-            </f:content>
-            <f:actions></f:actions>
-            <f:navigationActions>
-                <Button icon="sap-icon://action-settings" press="onPersoButtonPressed" class="sapUiTinyMarginBegin" tooltip="setting" ariaLabelledBy="setting" ariaDescribedBy="settingAction"/>
-                <Button icon="sap-icon://download" press="onDataExport" class="sapUiTinyMarginBegin" tooltip="download" ariaLabelledBy="download" ariaDescribedBy="downloadAction"/>
-            </f:navigationActions>
-        </f:DynamicPageTitle>
-      </f:title>
+      <f:title>
+				<f:DynamicPageTitle>
+					<f:heading>
+					  <Title text="{i18n>TitoloOdm}" wrapping="true" class="titleText" />
+					</f:heading>
+					<f:navigationActions>
+                        <Link href="https://www.w3.org/WAI/eval/report-tool/" target="_blank" text="{i18n>accessibility}" class="sapUiTinyMarginEnd" ariaLabelledBy="LinkAccessibility" ariaDescribedBy="LinkAccessibility" />
+						<Button icon="sap-icon://action-settings" press="onPersoButtonPressed" class="sapUiTinyMarginBegin" tooltip="setting" ariaLabelledBy="setting" ariaDescribedBy="settingAction"/>
+					    <Button icon="sap-icon://download" press="onDataExport" class="sapUiTinyMarginBegin" tooltip="download" ariaLabelledBy="download" ariaDescribedBy="downloadAction"/>
+					</f:navigationActions>
+				</f:DynamicPageTitle>
+			</f:title>
       <f:header>
         <f:DynamicPageHeader pinnable="true">
             <f:content>

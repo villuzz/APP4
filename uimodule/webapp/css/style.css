@@ -87,3 +87,7 @@ height: 100% !important;
 .sapMLabel{
   overflow: visible !important;
 }
+
+.titleText{
+  font-size: medium !important;
+}
