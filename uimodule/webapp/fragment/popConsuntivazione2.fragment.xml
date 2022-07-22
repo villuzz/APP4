@@ -1,0 +1,115 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <Dialog id="popConsuntivazione" title="{i18n>popConsuntivazione}" showHeader="false" contentHeight="50%" contentWidth="90%">
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="{i18n>popConsuntivazione}"></Title>
+                </contentLeft>
+                <contentRight>
+                    <Button text="{i18n>Conferma}" visible="{sSelect>/part2'}" type="Emphasized" press="onConfirmConsuntivazione"/>
+                    <Button text="{i18n>CreaAvviso}" visible="{sSelect>/part2'}" type="Accept" press="onConfirmAvviso"/>
+                    <Button text="{i18n>ModificaAvviso}" visible="{sSelect>/part2'}" type="Ghost" press="onConfirmAvviso"/>
+                    <Button text="{i18n>NoncreareAvviso}" visible="{sSelect>/part2'}" type="Reject" press="onConfirmAvviso"/>
+                    <Button text="{i18n>CreaAvvisoperaltraattività}" visible="{sSelect>/part2'}" type="Default" press="onConfirmAvviso"/>
+                    <Button icon="sap-icon://attachment-text-file" visible="{sSelect>/part2'}" text="{i18n>TestoEsteso}" tooltip="{i18n>Testoestesointervento}" type="Transparent" press="onConfirmAvviso"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+
+        <content>
+            <Table id="tMaterial" items="{ path: 'aCons>/'}" sticky="ColumnHeaders" showNoData="false" mode="None">
+                <columns>
+                    <Column width="7em"><Text text="{i18n>IndexPmo}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Napp}"/></Column>
+                    <Column width="7em"><Text text="{i18n>NumOrdAttivo}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Sistema}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Classe}"/></Column>
+                    <Column width="7em"><Text text="{i18n>ComponentTipo}"/></Column>
+                    <Column width="7em"><Text text="{i18n>StComponente}"/></Column>
+                    <Column width="7em"><Text text="{i18n>EquipmentCompo}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Cdl}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Lstar}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Effettivo}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Toth}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Lstar1}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Effettivo1}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Toth1}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Lstar2}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Effettivo2}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Toth2}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Lstar3}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Effettivo3}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Toth3}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Lstar4}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Effettivo4}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Toth4}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Lstar5}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Effettivo5}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Toth5}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Steus}"/></Column>
+                    <Column width="7em"><Text text="{i18n>DataInizioLavoro}"/></Column>
+                    <Column width="7em"><Text text="{i18n>DataFineLavoro}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Conferma}"/></Column>
+                    <Column width="7em"><Text text="{i18n>DettaglioConferma}"/></Column>
+                    <Column width="7em"><Text text="{i18n>CausaMancata}"/></Column>
+                    <Column width="7em"><Text text="{i18n>DettaglioCausaMancata}"/></Column>
+                    <Column width="7em"><Text text="{i18n>Divisionec}"/></Column>
+                    <Column width="7em"><Text text="{i18n>FlagCopia}"/></Column>
+                    <Column width="7em"><Text text="{i18n>AE}"/></Column>
+                </columns>
+                <items>
+                    <ColumnListItem vAlign="Middle">
+                        <cells>
+                            <Text text="{aCons>IndexPmo}"/>
+                            <Text text="{aCons>Napp}"/>
+                            <Text text="{aCons>NumOrdAttivo}"/>
+                            <Text text="{aCons>Sistema}"/>
+                            <Text text="{aCons>Classe}"/>
+                            <Text text="{aCons>ComponentTipo}"/>
+                            <Text text="{aCons>StComponente}"/>
+                            <Text text="{aCons>EquipmentCompo}"/>
+                            <Text text="{aCons>Cdl}"/>
+                            <Text text="{aCons>Lstar}"/>
+                            <Input value="{aCons>Effettivo}"  maxLength="7" type="Number"/>
+                            <Text text="{aCons>Toth}"/>
+                            <Text text="{aCons>Lstar1}"/>
+                            <Input value="{aCons>Effettivo1}"  maxLength="7" type="Number"/>
+                            <Text text="{aCons>Toth1}"/>
+                            <Text text="{aCons>Lstar2}"/>
+                            <Input value="{aCons>Effettivo2}"  maxLength="7" type="Number"/>
+                            <Text text="{aCons>Toth2}"/>
+                            <Text text="{aCons>Lstar3}"/>
+                            <Input value="{aCons>Effettivo3}"  maxLength="7" type="Number"/>
+                            <Text text="{aCons>Toth3}"/>
+                            <Text text="{aCons>Lstar4}"/>
+                            <Input value="{aCons>Effettivo4}"  maxLength="7" type="Number"/>
+                            <Text text="{aCons>Toth4}"/>
+                            <Text text="{aCons>Lstar5}"/>
+                            <Input value="{aCons>Effettivo5}"  maxLength="7" type="Number"/>
+                            <Text text="{aCons>Toth5}"/>
+                            <Text text="{aCons>Steus}"/>
+                            <DatePicker placeholder="Inserisci Inizio Lavori" displayFormat="dd-MM-YYYY" dateValue="{aCons>DataInizioLavoro}" />
+                            <DatePicker placeholder="Inserisci Fine Lavori" displayFormat="dd-MM-YYYY" dateValue="{aCons>DataFineLavoro}" />
+                            <ComboBox selectedKey="{aCons>/Conferma}"  valueStateText="{i18n>valueState} {i18n>Conferma}" items="{ path: 'sHelp>/CONFERMA', length:2500 }">
+                                <core:ListItem key="{sHelp>Fieldname1}" text="{sHelp>Fieldname1}"/>
+                            </ComboBox>
+                            <Input value="{aCons>DettaglioConferma}" />
+                            <Input value="{aCons>CausaMancata}" />
+                            <ComboBox selectedKey="{aCons>/CausaMancata}"  valueStateText="{i18n>valueState} {i18n>CausaMancata}" showSecondaryValues="true" items="{ path: 'sHelp>/CAUSA', length:2500 }">
+                                <core:ListItem key="{sHelp>Fieldname2}" text="{sHelp>Fieldname2}" additionalText="{sHelp>Fieldname3}"/>
+                            </ComboBox>
+                            
+                            <Input value="{aCons>DettaglioCausaMancata}" />
+                            <Text text="{aCons>Divisionec}"/>
+                            <Text text="{aCons>AE}"/>
+
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        <endButton>
+            <Button text="{i18n>Annulla}" type="Emphasized" press="onCloseConsuntivazione"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

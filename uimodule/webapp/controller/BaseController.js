@@ -107,6 +107,45 @@ sap.ui.define([
 
         return result;
       },
+      formatDate: function (sValue) {
+
+        if (sValue === "" || sValue === undefined || sValue === null) {
+            return "";
+        } else {
+            jQuery.sap.require("sap.ui.core.format.DateFormat");
+            var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "yyyyMMdd"});
+
+            return oDateFormat.format(new Date(sValue), true);
+        }
+    },
+      onTestoEstesoI: async function (line) {
+        var Tdname = "ZI" + line.IndexPmo.padStart(12, "0") + this.formatDate(line.InizioVal) + this.formatDate(line.FineVal) + line.Uzeit.replaceAll(":", "");
+        var aFilters = [];
+        aFilters.push(new Filter("Tdname", FilterOperator.EQ, Tdname));
+        aFilters.push(new Filter("Tdid", FilterOperator.EQ, "ST"));
+        aFilters.push(new Filter("Tdspras", FilterOperator.EQ, "I"));
+        aFilters.push(new Filter("Tdobject", FilterOperator.EQ, "TEXT"));
+        var result = await this._getTextLine("/TestiEstesi", aFilters);
+        return result;
+    },
+    _getTextLine: function (Entity, Filters) {
+      var xsoDataModelReport = this.getView().getModel();
+      return new Promise(function (resolve, reject) {
+          xsoDataModelReport.read(Entity, {
+              filters: Filters,
+              success: function (oDataIn) {
+                  if (oDataIn.results !== undefined) {
+                      resolve(oDataIn.results[0].Testo);
+                  } else {
+                      resolve("");
+                  }
+              },
+              error: function () {
+                  resolve("");
+              }
+          });
+      });
+  },
       _saveHana: function (URL, sData) {
         var xsoDataModelReport = this.getView().getModel();
         return new Promise(function (resolve, reject) {
@@ -116,6 +155,7 @@ sap.ui.define([
             },
             error: function (err) {
               var responseObject = JSON.parse(err.responseText);
+              sap.ui.core.BusyIndicator.hide(0);
               reject(MessageBox.error(responseObject.error.message.value));
             }
           });
@@ -158,6 +198,7 @@ sap.ui.define([
             },
             error: function (err) {
               var responseObject = JSON.parse(err.responseText);
+              sap.ui.core.BusyIndicator.hide(0);
               reject(MessageBox.error(responseObject.error.message.value));
             }
           });

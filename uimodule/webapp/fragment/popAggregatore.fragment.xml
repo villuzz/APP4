@@ -11,15 +11,15 @@
       <Carousel
 			height="auto"
 			pages="{
-				path: '/items'
+				path: 'mAGGR>/items'
 			}">
 			<customLayout>
-				<CarouselLayout visiblePagesCount="{/pagesCount}" />
+				<CarouselLayout visiblePagesCount="{mAGGR>/pagesCount}" />
 			</customLayout>
             <f:Card>
 				<f:header>
 					<cards:Header
-						title="{undefined>IndexPmo}"
+						title="{mAGGR>IndexPmo}"
 						subtitle=""
 						iconSrc=""
 						iconDisplayShape="Square" />
@@ -27,15 +27,15 @@
 				<f:content>
           <form:SimpleForm>
             <Label text="{i18n>pAggregatore}" />
-            <Input enabled="false" value="{undefined>Aggregatore}"/>
+            <Input enabled="false" value="{mAGGR>Aggregatore}"/>
             <Label text="{i18n>pDescrizione}"/>
-            <Input value="{undefined>Descrizione}" />
+            <Input value="{mAGGR>Descrizione}" />
             <Label text="{i18n>pNote}"/>
             <TextArea
             showExceededText="true"
             maxLength="255"
             cols="30"
-            value="{undefined>Note}"
+            value="{mAGGR>Note}"
             valueState="{= ${/value}.length > 255 ? 'Warning' : 'None' }" />
           </form:SimpleForm>
           <!-- <VBox class="sapUiSmallMargin">

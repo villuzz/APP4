@@ -31,7 +31,13 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
           return oDateFormat.format(new Date(sValue), true);
         }
       },
-
+      visibleStato: function (sValue) {
+        if (sValue === undefined || sValue === null || sValue === ""){
+          return false;
+        } else {
+          return true;
+        }
+      },
       formatDate: function (value) {
         if (value === "" || value === undefined || value === null) {
           return "";

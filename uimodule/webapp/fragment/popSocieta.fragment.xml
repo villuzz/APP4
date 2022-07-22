@@ -1,0 +1,23 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <Dialog id="popSocieta" title="{i18n>popSocieta}" showHeader="false" contentHeight="30%" contentWidth="30%">
+        <content>
+            <VBox height="100%" width="100%" alignContent="Center" alignItems="Center" justifyContent="Center">
+               
+                   <Label text="Societa"/>
+                    <ComboBox selectedKey="{sSelect>/Societa}" valueStateText="{i18n>valueState} {i18n>Societa}" showSecondaryValues="true" items="{ path: 'sHelp>/SOCIETA', length:2500 }">
+                        <core:ListItem key="{sHelp>Fieldname1}" text="{sHelp>Fieldname1}" additionalText="{sHelp>Fieldname2}"/>
+                    </ComboBox>
+              
+                    <Label text="Data" class="sapUiSmallMarginTop"/>
+                    <DatePicker placeholder="Inserisci Data di Conferma" displayFormat="dd-MM-YYYY" dateValue="{sSelect>/DataSocieta}"/>
+
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="{i18n>Conferma}" type="Emphasized" press="onConfirmSocieta"/>
+        </beginButton>
+        <endButton>
+            <Button text="{i18n>Annulla}" type="Emphasized" press="onCloseSocieta"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

@@ -5,30 +5,42 @@ sap.ui.define([
   "PM030/APP4/util/manutenzioneTable",
   "sap/m/TablePersoController",
   "sap/ui/core/Popup",
+  "sap/m/Token",
   "sap/ui/core/Fragment",
   "sap/ui/export/Spreadsheet",
   "sap/ui/export/library",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator",
+  "PM030/APP4/util/Validator",
 ], /**
  * @param {typeof sap.ui.model.json.JSONModel} JSONModel 
  * @param {typeof sap.m.MessageBox} MessageBox 
  * @param {typeof sap.m.TablePersoController} TablePersoController 
  * @param {typeof sap.ui.core.Popup} Popup 
+ * @param {typeof sap.m.Token} Token 
  * @param {typeof sap.ui.core.Fragment} Fragment 
  * @param {typeof sap.ui.export.Spreadsheet} Spreadsheet 
  * @param {typeof sap.ui.export.library} exportLibrary 
  * @param {typeof sap.ui.model.Filter} Filter 
  * @param {typeof sap.ui.model.FilterOperator} FilterOperator 
  */
-  function (Controller, JSONModel, MessageBox, manutenzioneTable, TablePersoController, Popup, Fragment, Spreadsheet, exportLibrary, Filter, FilterOperator) {
+  function (Controller, JSONModel, MessageBox, manutenzioneTable, TablePersoController, Popup, Token, Fragment, Spreadsheet, exportLibrary, Filter, FilterOperator, Validator) {
     "use strict";
     var oResource;
     oResource = new sap.ui.model.resource.ResourceModel({ bundleName: "PM030.APP4.i18n.i18n" }).getResourceBundle();
     var EdmType = exportLibrary.EdmType;
 
     return Controller.extend("PM030.APP4.controller.ViewPage", {
+      Validator: Validator,
       onInit: function () {
+
+        var oinIndex = this.getView().byId("inIndex");
+        var fnValidator = function (args) {
+            var text = args.text;
+            return new Token({key: text, text: text});
+        };
+        oinIndex.addValidator(fnValidator);
+
         this.getOwnerComponent().getRouter().getRoute("ViewPage").attachPatternMatched(this._onObjectMatched, this);
       },
       _onObjectMatched: async function () {
@@ -66,7 +78,21 @@ sap.ui.define([
         // oModelHelp.setData(sData);
         // this.getView().setModel(oModelHelp, "sHelp");
         // console.timeEnd("await");
-
+        var aFilter = [];
+        aFilter.push({
+          "Shlpname": "ZPROGPARAM",
+          "Shlpfield": "PROG",
+          "Sign": "I",
+          "Option": "EQ",
+          "Low": "ZM_CONSUNTIVAZIONI"
+      });
+      aFilter.push({
+        "Shlpname": "ZPROGPARAM",
+        "Shlpfield": "ZPARAM",
+        "Sign": "I",
+        "Option": "CP",
+        "Low": "CAUSA_MANC_ESEC*"
+    });
         const aHelp = [
           this.Shpl("T003O", "CH"),
           this.Shpl("H_T001W", "SH"),
@@ -77,6 +103,9 @@ sap.ui.define([
           this.Shpl("T353I", "CH"),
           this._fetchDataNoError("/T_ACT_SYST"),
           this._fetchDataNoError("/T_ACT_CL"),
+          this.Shpl("ZPM4R_D_FLG_CONF", "FV"),
+          this.Shpl("ZH_T001", "SH"),
+          this.Shpl("ZPROGPARAM", "CH", aFilter),
         ];
 
         // console.time('all')
@@ -93,6 +122,9 @@ sap.ui.define([
               TIPO_ATTIVITA,
               SISTEMA,
               CLASSE,
+              CONFERMA,
+              SOCIETA,
+              CAUSA
             ] = values;
             const oData = {
               TIPO_ORDINE,
@@ -103,7 +135,10 @@ sap.ui.define([
               CENTRO_LAVORO,
               TIPO_ATTIVITA,
               SISTEMA,
-              CLASSE
+              CLASSE,
+              CONFERMA,
+              SOCIETA,
+              CAUSA
             };
             oModelHelp.setData(oData);
             this.getView().setModel(oModelHelp, "sHelp");
@@ -119,7 +154,6 @@ sap.ui.define([
         /*var oModel = this.getView().getModel("sFilter");
         var divisione = oModel.getData().Divisione;
         if (! divisione) {
-            debugger
             MessageBox.error(oResource.getText("MessageDivisioneObbligatoria"));
         } else {
             this.onSearchFilters();
@@ -182,6 +216,18 @@ sap.ui.define([
             High: ""
           }];
         }
+        if (this.getView().byId("inIndex").getTokens().length > 0) {
+            var aSelIndici = this.getView().byId("inIndex").getTokens();
+            sFilter.SIndexPmo = [];
+            for (var i = 0; i < aSelIndici.length; i++) {
+              sFilter.SIndexPmo.push({
+                Sign: "I",
+                Option: "EQ",
+                Low: aSelIndici[i].getProperty("key"),
+                High: ""
+              });
+            }
+        }
         if (oData.TipoSchedulazione !== undefined && oData.TipoSchedulazione !== "") {
           sFilter.STipoPmo = [{
             Sign: "I",
@@ -198,9 +244,6 @@ sap.ui.define([
             High: ""
           }];
         }
-        /*if (oData.TipoAttivita !== undefined && oData.TipoAttivita !== ""){
-          sFilter.STipoAttivita = [{ Sign: "I", Option: "EQ", Low: oData.TipoAttivita, High: "" }];
-        }*/
         if (oData.Indisponibilita !== undefined && oData.Indisponibilita !== "") {
           sFilter.SIndisponibilita = [{
             Sign: "I",
@@ -241,27 +284,27 @@ sap.ui.define([
             High: ""
           }];
         }
-        if (oData.sedeTecnicaComponente !== undefined && oData.sedeTecnicaComponente !== "") {
+        if (oData.SedeTecnicaComponente !== undefined && oData.SedeTecnicaComponente !== "") {
           sFilter.SStrno = [{
             Sign: "I",
-            Option: "EQ",
-            Low: oData.sedeTecnicaComponente,
+            Option: "CP",
+            Low: oData.SedeTecnicaComponente + "*",
             High: ""
           }];
         }
         if (oData.ComponenteEquipment !== undefined && oData.ComponenteEquipment !== "") {
           sFilter.SEquipmentCompo = [{
             Sign: "I",
-            Option: "EQ",
-            Low: oData.ComponenteEquipment,
+            Option: "CP",
+            Low: oData.ComponenteEquipment + "*",
             High: ""
           }];
         }
         if (oData.DescrizioneComponente !== undefined && oData.DescrizioneComponente !== "") {
           sFilter.SDesComponente = [{
             Sign: "I",
-            Option: "EQ",
-            Low: oData.DescrizioneComponente,
+            Option: "CP",
+            Low: oData.DescrizioneComponente + "*",
             High: ""
           }];
         }
@@ -316,16 +359,27 @@ sap.ui.define([
         if (oData.Collective !== undefined) {
           sFilter.Collective = oData.Collective;
         }
-
+        var aFilterFE = [];
+        if (oData.TipoAttivita !== undefined && oData.TipoAttivita !== ""){
+          aFilterFE.push(new Filter("TipoAttivita", FilterOperator.EQ, oData.TipoAttivita));
+        }
         var oModel = new sap.ui.model.json.JSONModel(),
           allIndex = [];
 
         // In realtà fa una read, andava richiamato il metodo Post
         allIndex = await this._saveHana("/GetODM", sFilter);
         allIndex = allIndex.Odm.results;
-
+        if (allIndex.length === 0) {
+          sap.m.MessageToast.show("Nessun record trovato");
+          oModel.setData([]);
+          this.getView().setModel(oModel, "mManutenzione");
+      } else {
         oModel.setData(allIndex);
         this.getView().setModel(oModel, "mManutenzione");
+          this.byId("tbManutenzione").getBinding("items").filter(aFilterFE);
+          
+      }
+      this.getView().getModel("mManutenzione").refresh();
         sap.ui.core.BusyIndicator.hide();
       },
       handleTestoView: async function (oEvent) {
@@ -362,8 +416,15 @@ sap.ui.define([
       onImpostaData: function (oEvent) {
         var aItems = this.byId("tbManutenzione").getSelectedItems();
         if (aItems.length === 0) {
-          MessageBox.error(oResource.getText("MessageNotSelected"));
-        } else {
+          return MessageBox.error(oResource.getText("MessageNotSelected"));
+        }
+        if (aItems.length !== 1) {
+          return MessageBox.error(oResource.getText("MessageSelOne"));
+        }
+        var NumOrdAttivo = aItems[0].getBindingContext("mManutenzione").getObject().NumOrdAttivo;
+        if (NumOrdAttivo !== "" && NumOrdAttivo !== undefined && NumOrdAttivo !== null){
+          return MessageBox.error(oResource.getText("MessageOrdineAtt"));
+        }
           this.getView().setModel(new JSONModel([{
             DataPian: "",
             FineCard: ""
@@ -382,7 +443,6 @@ sap.ui.define([
             oPopover.setModel(new JSONModel({ DataPian: "", FineCard: "" }));
             oPopover.openBy(oButton);
           });
-        }
       },
       onClosePopoverImpostaData: function () {
         this.byId("myPopoverImpostaData").close();
@@ -396,15 +456,15 @@ sap.ui.define([
           // Modifica
           if (sValue !== "X") {
             var sDate = this.getView().getModel("oModelImpostaData").getData();
-            if (sDate.DataPian !== "") {
+            if (sDate.DataA !== "") {
               if (line.Napp === 1) {
-                sIndex.Scostamento = (sDate.DataPian - line.UltimaEsecuz) / 86400000;
+                sIndex.Scostamento = (sDate.DataDa - line.UltimaEsecuz) / 86400000;
               } else {
-                sIndex.Scostamento = (sDate.DataPian - line.UltimaEsecuz) / 86400000;
+                sIndex.Scostamento = (sDate.DataDa - line.UltimaEsecuz) / 86400000;
               } sIndex.Scostamento = Number((sIndex.Scostamento - line.Ggtot).toFixed());
             }
-            if (sDate.FineCard !== "") {
-              sIndex.FineCard = sDate.FineCard;
+            if (sDate.DataA !== "") {
+              sIndex.FineCard = sDate.DataA;
             }
           } else {
             // Cancellazione
@@ -417,6 +477,54 @@ sap.ui.define([
         this.byId("myPopoverImpostaData").close();
       },
       /** MANAGE ODM - START */
+      onSuggestSEDE: async function (oEvent) {
+        if (oEvent.getParameter("suggestValue").length >= 3) {
+            var sTerm = oEvent.getParameter("suggestValue");
+
+            var ListFl = {
+                Language: "IT",
+                GetDetails: "X",
+                N_FunclocList: [],
+                N_FunclocRa: [],
+                N_CategoryRa: []
+            };
+            if (sTerm != "" && sTerm != null) {
+                ListFl.N_FunclocRa.push({
+                    Sign: "I",
+                    Option: "CP",
+                    Low: sTerm + "*"
+                });
+            }
+
+            var allSedi = await this._saveHana("/ListFl", ListFl);
+            var sHelp = this.getView().getModel("sHelp").getData();
+            sHelp.SedeRealeSingle = allSedi.N_FunclocList.results;
+            this.getView().getModel("sHelp").refresh(true);
+        }
+    },
+    onSuggestEquipment: async function (oEvent) {
+      var sTerm = oEvent.getParameter("suggestValue");
+      if (sTerm.length >= 3) {
+          var aFilter = [];
+          aFilter.push({
+              "Shlpname": "ZPM4R_SH_EQUI",
+              "Shlpfield": "SPRAS",
+              "Sign": "I",
+              "Option": "EQ",
+              "Low": "IT"
+          });
+          aFilter.push({
+              "Shlpname": "ZPM4R_SH_EQUI",
+              "Shlpfield": "EQUNR",
+              "Sign": "I",
+              "Option": "CP",
+              "Low": oEvent.getParameter("suggestValue") + "*"
+          });
+          var sHelp = this.getView().getModel("sHelp").getData();
+          sHelp.EQUIPMENT = await this.Shpl("ZPM4R_SH_EQUI", "SH", aFilter);
+          this.getView().getModel("sHelp").refresh(true);
+      }
+  },
       _retrieveIndexODM: async function (index) {
         const oData = this.getModel("sFilter").getData();
         const sFilter = {
@@ -452,6 +560,22 @@ sap.ui.define([
       _gruopedByKey: function (array, key) {
         return array.reduce(function (rv, x) {
           (rv[x[key]] = rv[x[key]] || []).push(x);
+          return rv;
+        }, {});
+      },
+      _gruopedByKeyCumulazione: function (array) {
+        //chiave di raggruppamento per creazione ordine unico / piu ordini 
+        return array.reduce(function (rv, x) {
+          let key = x.Divisioneu + x.Indisponibilita + x.TipoOrdine + x.TipoAttivita + x.StComponente + x.EquipmentCompo + x.Lstar + x.Lstar1 + x.Lstar2 + x.Lstar3 + x.Lstar4 + x.Lstar5;
+          (rv[key] = rv[key] || []).push(x);
+          return rv;
+        }, {});
+      },
+      _gruopedByKeyPass: function (array) {
+        //chiave di raggruppamento per creazione ordine unico / piu ordini 
+        return array.reduce(function (rv, x) {
+          let key = x.Divisioneu + x.Indisponibilita + x.TipoOrdine + x.TipoAttivita + x.StComponente + x.EquipmentCompo;
+          (rv[key] = rv[key] || []).push(x);
           return rv;
         }, {});
       },
@@ -595,6 +719,80 @@ sap.ui.define([
         return oError;
       },
       /** MANAGE ODM - END */
+
+      onAggrega: async function () {
+        debugger
+        const oTable = this.byId("tbManutenzione");
+        const aSelectedItems = oTable.getSelectedItems();
+        if (aSelectedItems.length !== 0) {
+          
+        } else {
+          return MessageBox.error(oResource.getText("MessageNotSelected"));
+        }
+      },
+      onDisaggrega: async function () {
+        const oTable = this.byId("tbManutenzione");
+        const aSelectedItems = oTable.getSelectedItems();
+        if (aSelectedItems.length !== 0) {
+            const aSelectedObj = this._gruopedByKey(aItems.map(s => s.getBindingContext("mManutenzione").getObject()), "NumOrdAttivo");
+            //Controlli prima di Disaggregare 
+            for (const key in aSelectedObj) {
+                const aItems = aSelectedObj[key];
+                for (var i = 0; i < aItems.length; i++) {
+                    if (aSelectedObj[i].Aggregatore === "000000000000" || aSelectedObj[i].Aggregatore === undefined || aSelectedObj[i].Aggregatore === null){
+                    return MessageBox.error(oResource.getText("MessageNotDisAggr"));
+                    }
+                    if (aSelectedObj[i].StatoOdm.includes("RIL") || aSelectedObj[i].StatoOdm.includes("TECO")){
+                        return MessageBox.error(oResource.getText("MessageNotDisAggr"));
+                    }
+                }
+          }
+          //Disaggrega
+          for (i = 0; i < aSelectedObj.length; i++) {
+            var sData = await this._fillPayloadDisaggrega(aSelectedObj[i]);
+            await this._saveHana("/UpdateOrder", sData);
+
+            var aFilters = [];
+            aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, aSelectedObj[i].IndexPmo));
+            aFilters.push(new Filter("Appuntam", FilterOperator.EQ, Number(aSelectedObj[i].Napp)));
+            var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+            var sURL = "/" + aWO.__metadata.uri.split("/")[aWO.__metadata.uri.split("/").length - 1];
+            delete aWO.__metadata;
+            await this._updateHana(sURL, aWO);
+          }
+        } else {
+          return MessageBox.error(oResource.getText("MessageNotSelected"));
+        }
+
+
+
+        sap.ui.core.BusyIndicator.show(0);
+        var aItems = this.byId("tbManutenzione").getSelectedItems();
+        const aSelectedObj = this._gruopedByKey(aItems.map(s => s.getBindingContext("mManutenzione").getObject()), "NumOrdAttivo");
+        for (const key in aSelectedObj) {
+          if (aSelectedObj.hasOwnProperty(key)) {
+          const payload = aSelectedObj[key][0];
+
+          var sData = await this._fillPayloadRelease(payload);
+          debugger;
+          await this._saveHana("/UpdateOrder", sData);
+
+          var aFilters = [];
+          aFilters.push(new Filter("Aufnr", FilterOperator.EQ, payload.NumOrdAttivo));
+          var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+          for (var k = 0; k < aWO.length; k++) {
+            var sURL = "/" + aWO[k].__metadata.uri.split("/")[aWO[k].__metadata.uri.split("/").length - 1];
+            delete aWO[k].__metadata;
+            aWO[k].StatoOdm = "RIL.";
+            await this._updateHana(sURL, aWO[k]);
+          }
+        }
+      }
+        sap.ui.core.BusyIndicator.hide(0);
+        this.onSearchResult();
+        return MessageBox.success(oResource.getText("MessageSuccessRelease"));
+      },
+
       onCreaODM: async function () {
         const oTable = this.byId("tbManutenzione");
         const dialogAggregatore = this.byId("popAggregatore");
@@ -630,27 +828,54 @@ sap.ui.define([
                             emphasizedAction: oResource.getText("Annulla"),
                             initialFocus: oResource.getText("Annulla"),
                             onClose: async (sActionAggregatore) => {
-                              if (sActionAggregatore === MessageBox.Action.YES) {
+                              if (sActionAggregatore === MessageBox.Action.YES && aSelectedItems.length === 1) {
                                 //that.byId("Aggregatore").setValue(that.byId("tbManutenzione").getSelectedItems()[0].getBindingContext("mManutenzione").getObject().Aggregatore);
                                 const oAggregatori = this._gruopedByKey(aSelectedItems.map(s => s.getBindingContext("mManutenzione").getObject()), "IndexPmo");
                                 const aAggregatori = [];
-                                for (const key in oAggregatori) {
+                                var lastAggr = await this._getLastItemData("/T_APP_WO", "", "Aggregatore");
+                                lastAggr = lastAggr + 1;
+                                //for (const key in oAggregatori) {
                                   // eslint-disable-next-line no-prototype-builtins
-                                  if (oAggregatori.hasOwnProperty(key)) {
-                                    const element = oAggregatori[key];
-                                    aAggregatori.push({ IndexPmo: key, Aggregatore: element[0].Aggregatore || "", Descrizione: "", Note: "" });
-                                  }
-                                }
-                                dialogAggregatore.setModel(new JSONModel({ pagesCount: 4, items: aAggregatori }));
+                                  //if (oAggregatori.hasOwnProperty(key)) {
+                                    aAggregatori.push({ IndexPmo: "", Aggregatore: lastAggr || "", Descrizione: "", Note: "" }); //IndexPmo: key
+                                  //}
+                                //}
+                                dialogAggregatore.setModel(new JSONModel({ pagesCount: 4, items: aAggregatori }), "mAGGR" );
                                 dialogAggregatore.open();
                               } else if (sActionAggregatore === MessageBox.Action.NO) {
-                                await this.doCreateOdm(true, false);
+                                await this.doCreateOdm(true, false, false);
+                              } else if (sActionAggregatore === MessageBox.Action.YES && aSelectedItems.length > 1){
+                                return MessageBox.error(oResource.getText("MessageAggrOneSel"));
                               }
                             }
                           }
                         );
-                      } else {
-                        await this.doCreateOdm(false, false);
+                      } else if (sActionGeoCall === MessageBox.Action.NO) {
+
+                        const aSelectedObj = aSelectedItems.map((e) => e.getBindingContext("mManutenzione").getObject());
+                        const oGroupedByIndex = this._gruopedByKeyCumulazione(aSelectedObj);
+                        var cont = 0;
+                        for (const key in oGroupedByIndex) {
+                          cont++;
+                        }
+                        if (cont === 1 && aSelectedObj.length > 1){
+                            MessageBox.information(
+                                oResource.getText("MessageCUMULA"),
+                                {
+                                    actions: [MessageBox.Action.YES, MessageBox.Action.NO, oResource.getText("Annulla")],
+                                    emphasizedAction: oResource.getText("Annulla"),
+                                    initialFocus: oResource.getText("Annulla"),
+                                    onClose: async (sActionCumula) => {
+                                    if (sActionCumula === MessageBox.Action.YES) {
+                                        await this.doCreateOdm(false, false, true);
+                                    } else if (sActionCumula === MessageBox.Action.NO) {
+                                        await this.doCreateOdm(false, false, false);
+                                    }
+                                    }
+                                });
+                        } else {
+                            await this.doCreateOdm(false, false, false);
+                        }
                       }
                     }
                   }
@@ -717,74 +942,196 @@ sap.ui.define([
       doReleaseOdm: async function () {
         sap.ui.core.BusyIndicator.show(0);
         var aItems = this.byId("tbManutenzione").getSelectedItems();
-        for (var i = 0; i < aItems.length; i++) {
-          var payload = aItems[i].getBindingContext("mManutenzione").getObject();
-          var sData = this._fillPayloadUpdate(payload);
-          var result = await this._saveHana("/UpdateOrder", sData);
-          if (result.ErrorMessagesSet.results.map(r => r.Type).indexOf("E") !== -1) {
-            sap.ui.core.BusyIndicator.hide(0);
-            return MessageBox.error((result.ErrorMessagesSet.results.map((r) => r.Message).join("\n")));
+        const aSelectedObj = this._gruopedByKey(aItems.map(s => s.getBindingContext("mManutenzione").getObject()), "NumOrdAttivo");
+        for (const key in aSelectedObj) {
+          if (aSelectedObj.hasOwnProperty(key)) {
+          const payload = aSelectedObj[key][0];
+
+          var sData = await this._fillPayloadRelease(payload);
+          debugger;
+          await this._saveHana("/UpdateOrder", sData);
+
+          var aFilters = [];
+          aFilters.push(new Filter("Aufnr", FilterOperator.EQ, payload.NumOrdAttivo));
+          var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+          for (var k = 0; k < aWO.length; k++) {
+            var sURL = "/" + aWO[k].__metadata.uri.split("/")[aWO[k].__metadata.uri.split("/").length - 1];
+            delete aWO[k].__metadata;
+            aWO[k].StatoOdm = "RIL.";
+            await this._updateHana(sURL, aWO[k]);
           }
         }
+      }
         sap.ui.core.BusyIndicator.hide(0);
         this.onSearchResult();
-        return MessageBox.success(oResource.getText("MessageSuccessCreate"));
+        return MessageBox.success(oResource.getText("MessageSuccessRelease"));
       },
-      doCreateOdm: async function (Geocall, Aggregatore) {
+      doCreateOdm: async function (Geocall, Aggregatore, Cumulatore) {
         sap.ui.core.BusyIndicator.show(0);
-        var aItems = this.byId("tbManutenzione").getSelectedItems();
-        for (var i = 0; i < aItems.length; i++) {
-          var payload = aItems[i].getBindingContext("mManutenzione").getObject();
+        var aSelItems = this.byId("tbManutenzione").getSelectedItems();
+
+        const aSelectedObj = aSelItems.map((e) => e.getBindingContext("mManutenzione").getObject());
+        const aGroupByKey = this._gruopedByKeyPass(aSelectedObj);
+
+        for (const key in aGroupByKey) {
+          if (aGroupByKey.hasOwnProperty(key)) {
+          const aItems = aGroupByKey[key];
+          var aAPP_WO = [];
           //Crea ODM 
-          var sData = this._fillPayloadInsert(payload);
-          if (Geocall && !Aggregatore) sData.Status = "GEOC";
-          else if (Geocall && Aggregatore) sData.Status = "GEAG";
+          var sData = await this._fillPayloadInsert(aItems[0]);
 
+          var vActual = 0, vTestoActual = 0, ComponentUpdate = [], OrderDetailsSet = [],  TextCreateOrderSet = [];
+          var nItemMatnr = 0;
+          for (var i = 0; i < aItems.length; i++) {
+
+            var lineWO = {
+              Zcount: "",
+              IndexOdm: aItems[i].IndexPmo.padStart(12, "0"),
+              Appuntam: aItems[i].Napp,
+              Aufpl: aItems[i].Aufpl,
+              Qmnum: "",
+              NumIntervento: "",
+              StatoOdm: "APER",
+              DettConf: "",
+              DataPian: aItems[i].Datpia || null,
+              DataFineCard: aItems[i].FineCard || null,
+              DataPianNatur: aItems[i].InizioVal || null
+            };
+            if (Aggregatore) {
+              var mAggr = this.byId("popAggregatore").getModel("mAGGR").getData();
+              lineWO.Aggregatore = mAggr.items[0].Aggregatore;
+              lineWO.DescAggregatore = mAggr.items[0].Descrizione;
+              //Note
+            }
+            if (Cumulatore && i > 0){
+              for (let index = 0; index < 6; index++) {
+                if (aItems[i][`Lstar${index || ""}`] !== ""){
+                  sData.OperationListSet[index].WorkActivity = (Number(sData.OperationListSet[index].WorkActivity) + Number(aItems[i][`Toth${index || ""}`])).toString();
+                  sData.OperationListSet[index].NormalDuration = (Number(sData.OperationListSet[index].NormalDuration) + Number(aItems[i][`Hper${index || ""}`] * aItems[i][`Num${index || ""}`] )).toString();
+                  lineWO[`Aplzl${index || ""}`] = `${index + 1}`.toString();
+                  //Persone
+                }
+              }
+            } else {
+              var vTestoEsteso = await this.onTestoEstesoI(aItems[i]);
+              for (let index = 0; index < 6; index++) {
+                if (aItems[i][`Lstar${index || ""}`] !== ""){
+                  sData.OperationListSet.push({
+                    OperationNumber: `${vActual + 1}0`.toString().padStart(4, "0"), // "0010", // 0010, 0020, 0030 ecc
+                    ControlKey: aItems[i][`Steus${index || ""}`], // "", //"PM01", // Steus, Steus1, Steus2, Steus3, Steus4, Steus5
+                    WorkCenter: aItems[i][`Cdl${index || ""}`], // "I_MM5", // Cdl, Cdl1, Cdl2, Cdl3, Cdl4, Cdl5
+                    Plant: aItems[i].Divisionec, // Divisionec
+                    Description: aItems[i].DesBreve,
+                    Dest_merc: aItems[i].Destinatario,
+                    Quantity: "", // Persone, Persone1, Persone2, Persone3, Persone4, Persone5
+                    Price: "0", // Num, Num1, Num2, Num3, Num4, Num5
+                    WorkActivity: aItems[i][`Toth${index || ""}`], // "", // Lstar, Lstar1, Lstar2, Lstar3, Lstar4, Lstar5
+                    NormalDuration: (aItems[i][`Hper${index || ""}`] * aItems[i][`Num${index || ""}`]).toString(), // "0", // Hper, Hper1, Hper2, Hper3, Hper4, Hper5
+                    WorkUnit: aItems[i].Daune // "H" // Daune
+                    //cCalc: 0,
+                    //Act Work 
+                    //Persone
+                  });
+                  if (vTestoEsteso !== undefined && vTestoEsteso !== "" && vTestoEsteso !== null){
+                    OrderDetailsSet.push({
+                      "TextLine": aItems[i].DesBreve,
+                      "ColFormat": "*"
+                    });
+                    OrderDetailsSet.push({
+                      "TextLine": vTestoEsteso,
+                      "ColFormat": "*"
+                    });
+                    TextCreateOrderSet.push({
+                      "OrderNumber": "",
+                      "OperationNumber": `${vActual + 1}0`.toString().padStart(4, "0"),
+                      "Language": "IT",
+                      "LangugeSAP": "IT",
+                      "TextStart": (vTestoActual + 1).toString().padStart(8, "0"),
+                      "TextEnde": (vTestoActual + 2).toString().padStart(8, "0")
+                    });
+                    vTestoActual = vTestoActual + 2;
+                  }
+                  lineWO[`Aplzl${index || ""}`] = `${vActual + 1}`.toString();
+                  vActual++;
+                }
+              }
+            }
+            aAPP_WO.push(lineWO);
+
+            var JoinPMO = await this._fetchData("/JoinPMO", [ new Filter("IIndexPmo", FilterOperator.EQ, aItems[i].IndexPmo) ]);
+            if (JoinPMO){
+              var aMatnr = JoinPMO[0].T_PMO_MSet.results;
+              for (var k = 0; k < aMatnr.length; k++) {
+                nItemMatnr = nItemMatnr + 10;
+                ComponentUpdate.push({
+                  Material: aMatnr[k].Matnr ? aMatnr[k].Matnr.padStart(18, "0") : "",
+                  Plant: aMatnr[k].Werks ? aMatnr[k].Werks : "",
+                  RequirementQuantity: Number(aMatnr[k].Menge ? aMatnr[k].Menge : 0),
+                  //RequirementQuantityUnit: aMatnr[k].Meins ? aMatnr[k].Meins : "",
+                  StgeLoc: aMatnr[k].Lgort ? aMatnr[k].Lgort : "",
+                  ItemNumber: nItemMatnr.toString().padStart(4, "0"),
+                  Activity: "0010",
+                  ItemCat: "L"
+                });
+              }
+            }
+          }
+          //Crea l ordine
           var result = await this._saveHana("/CreateOrder", sData);
-
           if (result.ErrorMessagesSet.results.map(r => r.Type).indexOf("E") !== -1) {
             sap.ui.core.BusyIndicator.hide(0);
             return MessageBox.error((result.ErrorMessagesSet.results.map((r) => r.Message).join("\n")));
           }
 
           if (result.OrderNumber !== "") {
-            var lineWO = {
-              Zcount: "",
-              IndexOdm: payload.IndexPmo,
-              Appuntam: payload.Napp,
-              Aufnr: result.OrderNumber,
-              Aufpl: payload.Aufpl,
-              Aplzl: payload.Aplzl,
-              Aplzl1: payload.Aplzl1,
-              Aplzl2: payload.Aplzl2,
-              Aplzl3: payload.Aplzl3,
-              Aplzl4: payload.Aplzl4,
-              Aplzl5: payload.Aplzl5,
-              Qmnum: "",
-              NumIntervento: "",
-              StatoOdm: "APER",
-              DettConf: "",
-              DataPian: payload.Datpia || null,
-              DataFineCard: payload.FineCard || null,
-              DataPianNatur: payload.InizioVal || null
-            };
-
-            // Da Gestire
-            if (Aggregatore === "X") {
-              lineWO.Aggregatore = payload.aggregatore;
-              lineWO.DescAggregatore = payload.desc_aggregatore;
+            // Aggiorna i Componenti e le Operazioni che sul metodo precedente non vanno 
+            sData.OrderNumber = result.OrderNumber;
+            for (var k = 0; k < TextCreateOrderSet.length; k++) {
+              TextCreateOrderSet[k].OrderNumber = result.OrderNumber;
             }
+            if (ComponentUpdate.length > 0){
+              sData.ComponentUpdateSet = ComponentUpdate;
+            } else {
+              delete sData.ComponentUpdate;
+            }
+            delete sData.DateCreation;
+            delete sData.RequiredEndTime;
+            delete sData.RequiredStartTime;
+            delete sData.Revision;
+            delete sData.TimeCreation;
+            delete sData.UserCreator;
+            delete sData.WbsElem;
+            //delete sData.TUserStatusSet;
+            sData.OrderDetailsSet = OrderDetailsSet;
+            sData.TextCreateOrderSet = TextCreateOrderSet;
+            if (Geocall && !Aggregatore) sData.Status  = "GEOC";
+            else if (Geocall && Aggregatore) sData.Status  = "GEAG";
+            else sData.Status  = "OAMP";
 
-            await this._saveHana("/T_APP_WO", lineWO);
-            //INSERT zpm4r_t_app_wo.
-            //UPDATE zpm4r_t_pmo SET scostamento = 0 fine_card = '00000000' WHERE index_pmo EQ tabt_app_odm-index_pmo AND appuntam EQ tabt_app_odm-napp
+            await this._saveHana("/UpdateOrder", sData);
+
+            // Salva la riga sull APP_WO     
+            aAPP_WO = _.sortBy(aAPP_WO, "Appuntam");
+            debugger
+            for (i = 0; i < aAPP_WO.length; i++) {
+              aAPP_WO[i].Aufnr = result.OrderNumber,
+              await this._saveHana("/T_APP_WO", aAPP_WO[i]);
+
+              var sIndex = {
+                IndexPmo: aAPP_WO[i].IndexOdm,
+                Appuntam: aAPP_WO[i].Appuntam
+              };
+              var sURL = "/T_PMO(IndexPmo='" + aAPP_WO[i].IndexOdm + "')";
+              await this._updateHana(sURL, sIndex);
+            }
           }
+         }
         }
         sap.ui.core.BusyIndicator.hide(0);
         this.onSearchResult();
         return MessageBox.success(oResource.getText("MessageSuccessCreate"));
       },
-      _fillPayloadInsert: function (sItems) {
+      _fillPayloadInsert: async function (sItems) {
         const payloadInsert = {
           NotificationID: "",
           OrderNumber: "",
@@ -795,7 +1142,7 @@ sap.ui.define([
           FunctionalLocation: sItems.StComponente, // "ITW-ITWI-A1-01", // Sede Tecnica
           PlannerGroup: "",
           MaintPlanningPlant: "",
-          Description: "SHORT 1", // Sembra un concatena tra estrazione di "impianto" e Tipo Attività PM, però a volte prende la descrizione del terzo livello della Sede Tecnica e la Descrizione Azione PMO (da controllare a codice)
+          Description: "",
           StartDate: this.formatDate(sItems.Datpia), // "20190314", // Data Pianificazione
           FinishDate: this.formatDate(sItems.Datpia), //"20190314", // Data Pianificazione
           MaintPlant: "",
@@ -812,23 +1159,18 @@ sap.ui.define([
           ErrorMessagesSet: [],
           // ObjectListSet: [],
           // OrderDetailsSet: [],
-          // TUserStatusSet: [],
           // TextCreateOrderSet: []
+          //TUserStatusSet: []
         };
-        for (let index = 0; index < 6; index++) {
-          payloadInsert.OperationListSet.push({
-            OperationNumber: `${index + 1}0`.toString().padStart(4, "0"), // "0010", // 0010, 0020, 0030 ecc
-            ControlKey: sItems[`Steus${index || ""}`], // "", //"PM01", // Steus, Steus1, Steus2, Steus3, Steus4, Steus5
-            WorkCenter: sItems[`Cdl${index || ""}`], // "I_MM5", // Cdl, Cdl1, Cdl2, Cdl3, Cdl4, Cdl5
-            Plant: sItems.Divisionec, // Divisionec
-            Description: "", // ? 
-            Quantity: "0", // Persone, Persone1, Persone2, Persone3, Persone4, Persone5
-            Price: "0", // Num, Num1, Num2, Num3, Num4, Num5
-            WorkActivity: sItems[`Lstar${index || ""}`], // "", // Lstar, Lstar1, Lstar2, Lstar3, Lstar4, Lstar5
-            NormalDuration: sItems[`Hper${index || ""}`].toString(), // "0", // Hper, Hper1, Hper2, Hper3, Hper4, Hper5
-            WorkUnit: sItems.Daune // "H" // Daune
-          });
+        payloadInsert.Description = sItems.Impianto + " " + (sItems.StComponente.split("-")[2] === undefined ? "" :  sItems.StComponente.split("-")[2]);
+        var aFilters = [];
+        aFilters.push(new Filter("Spras", FilterOperator.EQ, "IT"));
+        aFilters.push(new Filter("Ilart", FilterOperator.EQ, sItems.TipoAttivita));
+        var aATTPM = await this._fetchDataNoError("/T_ATTPM", aFilters);
+        if (aATTPM.length > 0){
+          payloadInsert.Description = payloadInsert.Description + " " + aATTPM[0].Ilatx;
         }
+
         return payloadInsert;
 
         // var line = {
@@ -992,9 +1334,64 @@ sap.ui.define([
         // return line;
 
       },
-      _fillPayloadUpdate: function (sItems) {
+      _fillPayloadRelease: async function (sItems, aWO) {
         const payloadUpdate = {
-          SystemStatus: "RIL.",
+          SystemStatus: "RELEASE",
+          UserPartner: "",
+          UserPartnerOld: "",
+          NotificationID: "",
+          OrderNumber: sItems.NumOrdAttivo,
+          Status: "",
+          EquipmentID: "",
+          OrderType: sItems.TipoOrdine, // "M4", // TipoOrdine
+          SystCondition: sItems.Indisponibilita, // "0", // Indisponibilita
+          FunctionalLocation: sItems.StComponente, // "ITW-ITWI-A1-01", // Sede Tecnica
+          PlannerGroup: "",
+          MaintPlanningPlant: "",
+          Description: "SHORT 1", // Sembra un concatena tra estrazione di "impianto" e Tipo Attività PM, però a volte prende la descrizione del terzo livello della Sede Tecnica e la Descrizione Azione PMO (da controllare a codice)
+          StartDate: this.formatDate(sItems.Datpia), // "20190314", // Data Pianificazione
+          FinishDate: this.formatDate(sItems.Datpia), //"20190314", // Data Pianificazione
+          MaintPlant: "",
+          Plant: "",
+          MainWorkCenter: "",
+          MantActivityType: sItems.TipoAttivita, // "AC", // Tipo Attività PM
+          ProcessingGrp: "00",
+          Priority: sItems.Priorita, // "3", // Priorità
+          OperationListSet: [],
+          // expands
+          ErrorMessagesSet: [],
+          // ObjectListSet: [],
+          // OrderDetailsSet: [],
+          // TUserStatusSet: [],
+          // TextCreateOrderSet: []
+        };
+        const sFilter = {
+          "DateIn": "19700101",
+          "DateFi": "99991231",
+          "OrderNumber": "210000004253",
+          "GetOperationListSet": []
+        };
+        var aOperation = await this._saveHana("/GetOrder", sFilter);
+        aOperation = aOperation.GetOperationListSet.results;
+        for (var i = 0; aOperation.length > i; i++) {
+          payloadUpdate.OperationListSet.push({
+            OperationNumber: aOperation[i].OperationNumber,
+            ControlKey: aOperation[i].ControlKey,
+            WorkCenter: aOperation[i].WorkCenter,
+            Plant: aOperation[i].Plant,
+            Description: aOperation[i].Description,
+            Quantity: aOperation[i].Quantity,
+            Price: aOperation[i].Price,
+            WorkActivity: aOperation[i].WorkActivity,
+            NormalDuration: aOperation[i].NormalDuration,
+            WorkUnit: aOperation[i].WorkUnit
+          });
+        }
+        return payloadUpdate;
+      },
+      _fillPayloadUpdate: async function (sItems, aWO) {
+        const payloadUpdate = {
+          SystemStatus: "RELEASE",
           UserPartner: "",
           UserPartnerOld: "",
           NotificationID: "",
@@ -1024,8 +1421,9 @@ sap.ui.define([
           // TextCreateOrderSet: []
         };
         for (let index = 0; index < 6; index++) {
+          if (sItems[`Lstar${index || ""}`] !== ""){
           payloadUpdate.OperationListSet.push({
-            OperationNumber: `${index + 1}0`.toString().padStart(4, "0"), // "0010", // 0010, 0020, 0030 ecc
+            OperationNumber: `${Number(aWO[0][`Aplzl${index || ""}`])}0`.toString().padStart(4, "0"), // "0010", // 0010, 0020, 0030 ecc
             ControlKey: sItems[`Steus${index || ""}`], // "", //"PM01", // Steus, Steus1, Steus2, Steus3, Steus4, Steus5
             WorkCenter: sItems[`Cdl${index || ""}`], // "I_MM5", // Cdl, Cdl1, Cdl2, Cdl3, Cdl4, Cdl5
             Plant: sItems.Divisionec, // Divisionec
@@ -1037,33 +1435,48 @@ sap.ui.define([
             WorkUnit: sItems.Daune // "H" // Daune
           });
         }
+        }
         return payloadUpdate;
       },
       onConfirmAgg: async function () {
-        await this.doCreateOdm(true, true);
+        await this.doCreateOdm(true, true, false);
         this.byId("popAggregatore").close();
       },
       onCloseAgg: function () {
         this.byId("popAggregatore").close();
       },
       onCancellaData: function () {
-        var oTable = this.byId("tbManutenzione");
-        var SelectItem = oTable.getSelectedItems();
-        if (SelectItem.length !== 0) {
-          MessageBox.warning(oResource.getText("MessageCancellaData"), {
-            actions: [
-              MessageBox.Action.OK, MessageBox.Action.CANCEL
-            ],
-            emphasizedAction: MessageBox.Action.OK,
-            onClose: function (sAction) {
-              if (sAction === MessageBox.Action.OK) {
-                this.onSalvaImpostaData("X");
-              }
-            }.bind(this)
-          });
-        } else {
-          MessageBox.error(oResource.getText("MessageNotSelected"));
+
+        var aItems = this.byId("tbManutenzione").getSelectedItems();
+        if (aItems.length === 0) {
+          return MessageBox.error(oResource.getText("MessageNotSelected"));
         }
+        /*if (aItems.length !== 1) {
+          return MessageBox.error(oResource.getText("MessageSelOne"));
+        }*/
+
+        const aSelectedObj = aItems.map((e) => e.getBindingContext("mManutenzione").getObject());
+        for (var i = 0; i < aSelectedObj.length; i++) {
+          if (aSelectedObj[i].NumOrdAttivo !== "" && aSelectedObj[i].NumOrdAttivo !== undefined && aSelectedObj[i].NumOrdAttivo !== null){
+            return MessageBox.error(oResource.getText("MessageOrdineAtt"));
+          }
+            if ((aSelectedObj[i].Scostamento === 0 || aSelectedObj[i].Scostamento === "0" || aSelectedObj[i].Scostamento === undefined)
+             && (aSelectedObj[i].FineCard === "" || aSelectedObj[i].FineCard === null || aSelectedObj[i].FineCard === undefined)){
+              return MessageBox.error(oResource.getText("MessageSelScosFine"));
+            }
+        }
+        MessageBox.warning(oResource.getText("MessageCancellaData"), {
+          actions: [
+            MessageBox.Action.OK, MessageBox.Action.CANCEL
+          ],
+          emphasizedAction: MessageBox.Action.OK,
+          onClose: function (sAction) {
+            if (sAction === MessageBox.Action.OK) {
+              this.onSalvaImpostaData("X");
+            }
+          }.bind(this)
+        });
+
       },
       onReleaseODM: async function () {
         var oTable = this.byId("tbManutenzione");
@@ -1133,13 +1546,34 @@ sap.ui.define([
             emphasizedAction: MessageBox.Action.OK,
             onClose: (sAction) => {
               if (sAction === MessageBox.Action.OK) {
-                this.doConsuntivazione();
+                var oModel1 = new sap.ui.model.json.JSONModel();
+                oModel1.setData({});
+                this.getView().setModel(oModel1, "sSelect");
+                this.byId("popSocieta").open();
               }
             }
           });
         } else {
           MessageBox.error(oResource.getText("MessageNotSelected"));
         }
+      },
+      onConfirmConsuntivazione: function () {
+        this.byId("popConsuntivazione").close();
+        this.doConsuntivazione();
+      },
+      onCloseConsuntivazione: function () {
+        this.byId("popConsuntivazione").close();
+      },
+      onConfirmSocieta: function () {
+        var sSelect = this.getView().getModel("sSelect").getData();
+        if (sSelect.Societa === "" || sSelect.Societa === undefined || sSelect.DataSocieta === null || sSelect.DataSocieta === undefined){
+          return sap.m.MessageToast.show("Inserire i Campi");
+        }
+        this.byId("popSocieta").close();
+        this.byId("popConsuntivazione").open();
+      },
+      onCloseSocieta: function () {
+        this.byId("popSocieta").close();
       },
       onDataExport: function () {
         var selectedTab = this.byId("tbManutenzione");

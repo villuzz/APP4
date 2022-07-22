@@ -49,7 +49,7 @@
 
                       <fb:FilterGroupItem id="index" visible="true" groupName="__$INTERNAL$" name="ind" label="{i18n>Index}" partOfCurrentVariant="true" visibleInFilterBar="true">
                           <fb:control>
-                              <Input type="Number" value="{sFilter>/Index}" maxLength="12"/>
+                              <MultiInput id="inIndex" type="Number" showValueHelp="false" />
                           </fb:control>
                       </fb:FilterGroupItem>
 
@@ -67,7 +67,7 @@
 
                       <fb:FilterGroupItem id="tipoOrdine" visible="true" groupName="__$INTERNAL$" name="to" label="{i18n>TipoOrdine}" partOfCurrentVariant="true" visibleInFilterBar="true">
                           <fb:control>
-                              <ComboBox valueStateText="{i18n>valueState} {i18n>TIPO_ORDINE}" showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_ORDINE' }" selectedKey="{sSelect>/TipoOrdine}">
+                              <ComboBox valueStateText="{i18n>valueState} {i18n>TIPO_ORDINE}" showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_ORDINE' }" selectedKey="{sFilter>/TipoOrdine}">
                                 <core:ListItem key="{sHelp>Fieldname1}" text="{sHelp>Fieldname1}" additionalText="{sHelp>Fieldname2} - {sHelp>Fieldname3}"/>
                               </ComboBox>
                           </fb:control>
@@ -75,7 +75,7 @@
 
                       <fb:FilterGroupItem id="tipoAttivita" visible="true" groupName="__$INTERNAL$" name="ta" label="{i18n>TipoAttivita}" partOfCurrentVariant="true" visibleInFilterBar="true">
                           <fb:control>
-                                <ComboBox valueStateText="{i18n>valueState} {i18n>TIPO_ATTIVITA}" showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_ATTIVITA', length:2000 }" selectedKey="{sFilter>/TipoAttivita}">
+                                <ComboBox valueStateText="{i18n>valueState} {i18n>TIPO_ATTIVITA}" showSecondaryValues="true" items="{ path: 'sHelp>/TIPO_ATTIVITA', length:2000 }" selectedKey="{sFilter>/TipoAttivita}" >
                                   <core:ListItem key="{sHelp>Fieldname1}" text="{sHelp>Fieldname1}" additionalText="{sHelp>Fieldname2}"/>
                                 </ComboBox>
                           </fb:control>
@@ -120,18 +120,50 @@
                               <Input type="Text" value="{sFilter>/Impianto}" maxLength="40"/>
                           </fb:control>
                       </fb:FilterGroupItem>
-
-                      <fb:FilterGroupItem id="sedeTecnicaComponente" visible="true" groupName="__$INTERNAL$" name="std" label="{i18n>SedeTecnicaComponente}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                          <fb:control>
-                              <Input type="Text" value="{sFilter>/SedeTecnicaComponente}" maxLength="40"/>
-                          </fb:control>
-                      </fb:FilterGroupItem>
-
-                      <fb:FilterGroupItem id="componenteEquipment" visible="true" groupName="__$INTERNAL$" name="ce" label="{i18n>ComponenteEquipment}" partOfCurrentVariant="true" visibleInFilterBar="true">
-                          <fb:control>
-                              <Input type="Text" value="{sFilter>/ComponenteEquipment}" maxLength="18"/>
-                          </fb:control>
-                      </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="FIIStComponente" visible="true" groupName="__$INTERNAL$" name="FYIStComponente" label="{i18n>SedeTecnicaComponente}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                              <fb:control>
+                                <Input showSuggestion="true" maxSuggestionWidth="40em" maxLength="40" value="{sFilter>/SedeTecnicaComponente}" suggestionRows="{sHelp>/SedeRealeSingle}" suggest=".onSuggestSEDE">
+                                                <suggestionColumns>
+                                                    <Column>
+                                                        <Label text="{i18n>Functlocation}"/>
+                                                    </Column>
+                                                    <Column hAlign="Center">
+                                                        <Label text="{i18n>Category}"/>
+                                                    </Column>
+                                                    <Column hAlign="End">
+                                                        <Label text="{i18n>Descript}"/>
+                                                    </Column>
+                                                </suggestionColumns>
+                                                <suggestionRows>
+                                                    <ColumnListItem>
+                                                        <Label text="{sHelp>Functlocation}"/>
+                                                        <Label text="{sHelp>Category}"/>
+                                                        <Label text="{sHelp>Descript}"/>
+                                                    </ColumnListItem>
+                                                </suggestionRows>
+                                            </Input>
+                              </fb:control>
+                            </fb:FilterGroupItem>
+                      <fb:FilterGroupItem id="FIEquipment" visible="true" groupName="__$INTERNAL$" name="FYEquipment" label="{i18n>ComponenteEquipment}" partOfCurrentVariant="true" visibleInFilterBar="true">
+                              <fb:control>
+                                <Input showSuggestion="true" maxSuggestionWidth="40em" value="{sFilter>/ComponenteEquipment}" suggestionRows="{sHelp>/EQUIPMENT}" suggest=".onSuggestEquipment" >
+                                        <suggestionColumns>
+                                          <Column>
+                                            <Label text="{i18n>Equipment}" />
+                                          </Column>
+                                          <Column hAlign="End">
+                                            <Label text="{i18n>Description}" />
+                                          </Column>
+                                        </suggestionColumns>
+                                        <suggestionRows>
+                                          <ColumnListItem>
+                                            <Label text="{sHelp>Fieldname1}" />
+                                            <Label text="{sHelp>Fieldname3}" />
+                                          </ColumnListItem>
+                                        </suggestionRows>
+                                      </Input>
+                              </fb:control>
+                            </fb:FilterGroupItem>
 
                       <fb:FilterGroupItem id="descrizioneComponente" visible="true" groupName="__$INTERNAL$" name="dc" label="{i18n>DescrizioneComponente}" partOfCurrentVariant="true" visibleInFilterBar="true">
                           <fb:control>
@@ -226,7 +258,7 @@
                       <Column width="25em" id="col5" app:property="Impianto"><Text text="{i18n>Impianto}"/></Column>
                       <Column width="10em" id="col7" app:property="NumOrdAttivo"><Text text="{i18n>NumOrdAttivo}"/></Column>
                       <Column width="10em" id="col9" app:property="TipoOrdine"><Text text="{i18n>TipoOrdine}"/></Column>
-                      <Column width="10em" id="col11" app:property="StComponente"><Text text="{i18n>StComponente}"/></Column>
+                      <Column width="14em" id="col11" app:property="StComponente"><Text text="{i18n>StComponente}"/></Column>
                       <Column width="10em" id="col13" app:property="DesComponente"><Text text="{i18n>DesComponente}"/></Column>
                       <Column width="10em" id="col15" app:property="DesBreve"><Text text="{i18n>DesBreve}"/></Column>
                       <Column width="10em" id="col17" app:property="DurataCiclo"><Text text="{i18n>DurataCiclo}"/></Column>
@@ -361,7 +393,7 @@
                               <Text text="{mManutenzione>Divisioneu}"/>
                               <Text text="{mManutenzione>TipoAttivita}"/>
                               <Text text="{mManutenzione>TipoPmo}"/>
-                              <Text text="{mManutenzione>StatoOdm}"/>
+                              <Text text="{mManutenzione>StatoOdm}" visible="{ parts:[{path:'mManutenzione>NumOrdAttivo'}], formatter: '.LocalFormatter.visibleStato'}"/>
                               <Text text="{mManutenzione>EquipmentCompo}"/>
                               <Text text="{mManutenzione>FlagMateriali}"/>
                               <Text text="{mManutenzione>FlagPrestazioni}"/>
@@ -417,6 +449,8 @@
           </OverflowToolbar>
       </f:footer>
         <f:dependents>
+        <core:Fragment fragmentName="PM030.APP4.fragment.popSocieta" type="XML"></core:Fragment>
+        <core:Fragment fragmentName="PM030.APP4.fragment.popConsuntivazione" type="XML"></core:Fragment>
     <core:Fragment fragmentName="PM030.APP4.fragment.popTestoEstesoView" type="XML"></core:Fragment>
     <core:Fragment fragmentName="PM030.APP4.fragment.popAggregatore" type="XML"></core:Fragment>
   </f:dependents>

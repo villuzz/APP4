@@ -1,9 +1,9 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
 	<ResponsivePopover id="myPopoverImpostaData" afterClose="handleAfterClose" placement="Auto" initialFocus="action"
-      ariaLabelledBy="ImpostaData" ariaDescribedBy="Data">
+      ariaLabelledBy="ImpostaData" ariaDescribedBy="Data" title="{i18n>PianTitle}">
     	<Panel
 			accessibleRole="Region"
-			headerText="{i18n>TableTitle}"
+			headerText=""
 			class="sapUiContentPadding"
 		>
 		<l:VerticalLayout class="sapUiContentPadding" width="100%">
