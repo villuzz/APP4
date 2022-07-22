@@ -88,6 +88,20 @@ sap.ui.define([
           );
         }
       },
+      multiFilterText: function (aArray, vName) {
+
+        var aFilter = [];
+        if (aArray.length === 0) {
+            return new Filter(vName, FilterOperator.EQ, "");
+        } else if (aArray.length === 1) {
+            return new Filter(vName, FilterOperator.EQ, aArray[0]);
+        } else {
+            for (var i = 0; i < aArray.length; i++) {
+                aFilter.push(new Filter(vName, FilterOperator.EQ, aArray[i]));
+            }
+            return aFilter;
+        }
+    },
       Shpl: async function (ShplName, ShplType, aFilter) {
 
         var sFilter = {

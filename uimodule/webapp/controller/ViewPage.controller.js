@@ -40,6 +40,43 @@ sap.ui.define([
             return new Token({key: text, text: text});
         };
         oinIndex.addValidator(fnValidator);
+        this.getView().byId("inEquip").addValidator(function(args){
+          if (args.suggestionObject){
+            var key = args.suggestionObject.getCells()[0].getText();
+            return new sap.m.Token({key: key, text: key});
+          } else {
+            var text = args.text;
+            return new sap.m.Token({key: text, text: text});
+          }
+          });
+        this.getView().byId("inSede").addValidator(function(args){
+          if (args.suggestionObject){
+            var key = args.suggestionObject.getCells()[0].getText();
+            return new sap.m.Token({key: key, text: key});
+          } else {
+            var text = args.text;
+            return new sap.m.Token({key: text, text: text});
+          }
+          });
+          this.getView().byId("inImpianto").addValidator(function(args){
+            if (args.suggestionObject){
+              var key = args.suggestionObject.getCells()[0].getText();
+              return new sap.m.Token({key: key, text: key});
+            } else {
+              var text = args.text;
+              return new sap.m.Token({key: text, text: text});
+            }
+            });
+
+            this.getView().byId("inAzione").addValidator(function(args){
+              if (args.suggestionObject){
+                var key = args.suggestionObject.getCells()[0].getText();
+                return new sap.m.Token({key: key, text: key});
+              } else {
+                var text = args.text;
+                return new sap.m.Token({key: text, text: text});
+              }
+              });
 
         this.getOwnerComponent().getRouter().getRoute("ViewPage").attachPatternMatched(this._onObjectMatched, this);
       },
@@ -159,6 +196,24 @@ sap.ui.define([
             this.onSearchFilters();
         }*/
       },
+
+      filterSetMulti: function (sValue, Op) {
+        if (!Op){ Op = "EQ"; }
+        var aValue = [];
+        if (sValue !== undefined) {
+          if (sValue.length !== 0) {
+          for (var i = 0; i < sValue.length; i++) {
+            aValue.push({
+              Sign: "I",
+              Option: Op,
+              Low: sValue[i],
+              High: ""
+            });
+          }
+        }
+        }
+        return aValue;
+      },
       onSearchFilters: async function () {
         sap.ui.core.BusyIndicator.show(0);
         var oData = this.getModel("sFilter").getData();
@@ -196,30 +251,24 @@ sap.ui.define([
         STipoPmo: [] //Tipo Schedulazione*/
         };
 
+        var aFilterFE = [], tempFilter = [], i = 0;
+        /*if (oData.TipoAttivita !== undefined && oData.TipoAttivita !== ""){
+          aFilterFE.push(new Filter("TipoAttivita", FilterOperator.EQ, oData.TipoAttivita));
+        }*/
+        if (oData.TipoAttivita !== undefined) {
+          if (oData.TipoAttivita.length !== 0) {
+              tempFilter = this.multiFilterText(oData.TipoAttivita, "TipoAttivita");
+              aFilterFE = aFilterFE.concat(tempFilter);
+          }
+        }
         sFilter.PDat1 = oData.DataDiRiferimento;
         sFilter.PDat2 = oData.PeriodoDiSelezioneDa;
         sFilter.PDat3 = oData.PeriodoDiSelezioneA;
 
-        if (oData.Divisione !== undefined && oData.Divisione !== "") {
-          sFilter.SDivisioneu = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.Divisione,
-            High: ""
-          }];
-        }
-        if (oData.Index !== undefined && oData.Index !== "") {
-          sFilter.SIndexPmo = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.Index,
-            High: ""
-          }];
-        }
         if (this.getView().byId("inIndex").getTokens().length > 0) {
             var aSelIndici = this.getView().byId("inIndex").getTokens();
             sFilter.SIndexPmo = [];
-            for (var i = 0; i < aSelIndici.length; i++) {
+            for (i = 0; i < aSelIndici.length; i++) {
               sFilter.SIndexPmo.push({
                 Sign: "I",
                 Option: "EQ",
@@ -228,99 +277,66 @@ sap.ui.define([
               });
             }
         }
-        if (oData.TipoSchedulazione !== undefined && oData.TipoSchedulazione !== "") {
-          sFilter.STipoPmo = [{
+        if (this.getView().byId("inEquip").getTokens().length > 0) {
+          var aSelEquip = this.getView().byId("inEquip").getTokens();
+          sFilter.SEquipmentCompo = [];
+          for (i = 0; i < aSelEquip.length; i++) {
+            sFilter.SEquipmentCompo.push({
+              Sign: "I",
+              Option: "CP",
+              Low: aSelEquip[i].getProperty("key"),
+              High: ""
+            });
+          }
+      }
+      if (this.getView().byId("inImpianto").getTokens().length > 0) {
+        var aSelImpianto = this.getView().byId("inImpianto").getTokens();
+        sFilter.SPltxu = [];
+        for (i = 0; i < aSelImpianto.length; i++) {
+          sFilter.SPltxu.push({
             Sign: "I",
             Option: "EQ",
-            Low: oData.TipoSchedulazione,
+            Low: aSelImpianto[i].getProperty("key"),
             High: ""
-          }];
+          });
         }
-        if (oData.TipoOrdine !== undefined && oData.TipoOrdine !== "") {
-          sFilter.STipoOrdine = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.TipoOrdine,
-            High: ""
-          }];
-        }
-        if (oData.Indisponibilita !== undefined && oData.Indisponibilita !== "") {
-          sFilter.SIndisponibilita = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.Indisponibilita,
-            High: ""
-          }];
-        }
-        if (oData.Sistema !== undefined && oData.Sistema !== "") {
-          sFilter.SSistema = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.Sistema,
-            High: ""
-          }];
-        }
-        if (oData.Azione !== undefined && oData.Azione !== "") {
-          sFilter.SAzione = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.Azione,
-            High: ""
-          }];
-        }
-        if (oData.Classe !== undefined && oData.Classe !== "") {
-          sFilter.SClasse = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.Classe,
-            High: ""
-          }];
-        }
-        if (oData.Impianto !== undefined && oData.Impianto !== "") {
-          sFilter.SPltxu = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.Impianto,
-            High: ""
-          }];
-        }
-        if (oData.SedeTecnicaComponente !== undefined && oData.SedeTecnicaComponente !== "") {
-          sFilter.SStrno = [{
+    }
+    if (this.getView().byId("inAzione").getTokens().length > 0) {
+      var aSelAzione = this.getView().byId("inAzione").getTokens();
+      sFilter.SAzione = [];
+      for (i = 0; i < aSelAzione.length; i++) {
+        sFilter.SAzione.push({
+          Sign: "I",
+          Option: "EQ",
+          Low: aSelAzione[i].getProperty("key"),
+          High: ""
+        });
+      }
+  }
+
+      if (this.getView().byId("inSede").getTokens().length > 0) {
+        var aSelSede = this.getView().byId("inSede").getTokens();
+        sFilter.SStrno = [];
+        for (i = 0; i < aSelSede.length; i++) {
+          sFilter.SStrno.push({
             Sign: "I",
             Option: "CP",
-            Low: oData.SedeTecnicaComponente + "*",
+            Low: aSelSede[i].getProperty("key") + "*",
             High: ""
-          }];
-        }
-        if (oData.ComponenteEquipment !== undefined && oData.ComponenteEquipment !== "") {
-          sFilter.SEquipmentCompo = [{
+          });
+          sFilter.SStrno.push({
             Sign: "I",
-            Option: "CP",
-            Low: oData.ComponenteEquipment + "*",
+            Option: "EQ",
+            Low: aSelSede[i].getProperty("key"),
             High: ""
-          }];
+          });
         }
+    }
         if (oData.DescrizioneComponente !== undefined && oData.DescrizioneComponente !== "") {
           sFilter.SDesComponente = [{
             Sign: "I",
             Option: "CP",
             Low: oData.DescrizioneComponente + "*",
-            High: ""
-          }];
-        }
-        if (oData.CentroDiLavoro !== undefined && oData.CentroDiLavoro !== "") {
-          sFilter.SCentroLavoro = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.CentroDiLavoro,
-            High: ""
-          }];
-        }
-        if (oData.Destinatario !== undefined && oData.Destinatario !== "") {
-          sFilter.SDestinatario = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.Destinatario,
             High: ""
           }];
         }
@@ -332,37 +348,35 @@ sap.ui.define([
             High: ""
           }];
         }
-        if (oData.TipoGestione !== undefined && oData.TipoGestione !== "") {
-          sFilter.STipoGestione = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.TipoGestione,
-            High: ""
-          }];
-        }
-        if (oData.Finalita !== undefined && oData.Finalita !== "") {
-          sFilter.STipoGestione1 = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.Finalita,
-            High: ""
-          }];
-        }
-        if (oData.GrupControllo !== undefined && oData.GrupControllo !== "") {
-          sFilter.STipoGestione2 = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.GrupControllo,
-            High: ""
-          }];
-        }
         if (oData.Collective !== undefined) {
           sFilter.Collective = oData.Collective;
         }
-        var aFilterFE = [];
-        if (oData.TipoAttivita !== undefined && oData.TipoAttivita !== ""){
-          aFilterFE.push(new Filter("TipoAttivita", FilterOperator.EQ, oData.TipoAttivita));
+        if (oData.Indisponibilita !== undefined && oData.Indisponibilita !== "") {
+          sFilter.SIndisponibilita = [{
+            Sign: "I",
+            Option: "EQ",
+            Low: oData.Indisponibilita,
+            High: ""
+          }];
         }
+        if (oData.TipoSchedulazione !== undefined && oData.TipoSchedulazione !== "") {
+          sFilter.STipoPmo = [{
+            Sign: "I",
+            Option: "EQ",
+            Low: oData.TipoSchedulazione,
+            High: ""
+          }];
+        }
+        sFilter.SDivisioneu = this.filterSetMulti(oData.Divisione);
+        sFilter.STipoOrdine = this.filterSetMulti(oData.TipoOrdine);
+        sFilter.SSistema = this.filterSetMulti(oData.Sistema);
+        sFilter.SClasse = this.filterSetMulti(oData.Classe);
+        sFilter.SCentroLavoro = this.filterSetMulti(oData.CentroDiLavoro);
+        sFilter.SDestinatario = this.filterSetMulti(oData.Destinatario);
+        sFilter.STipoGestione = this.filterSetMulti(oData.TipoGestione);
+        sFilter.STipoGestione1 = this.filterSetMulti(oData.Finalita);
+        sFilter.STipoGestione2 = this.filterSetMulti(oData.GrupControllo);
+
         var oModel = new sap.ui.model.json.JSONModel(),
           allIndex = [];
 
@@ -377,7 +391,6 @@ sap.ui.define([
         oModel.setData(allIndex);
         this.getView().setModel(oModel, "mManutenzione");
           this.byId("tbManutenzione").getBinding("items").filter(aFilterFE);
-          
       }
       this.getView().getModel("mManutenzione").refresh();
         sap.ui.core.BusyIndicator.hide();
@@ -413,7 +426,7 @@ sap.ui.define([
       onCloseTestoView: function () {
         this.byId("popTestoView").close();
       },
-      onImpostaData: function (oEvent) {
+      onImpostaData: async function (oEvent) {
         var aItems = this.byId("tbManutenzione").getSelectedItems();
         if (aItems.length === 0) {
           return MessageBox.error(oResource.getText("MessageNotSelected"));
@@ -421,19 +434,22 @@ sap.ui.define([
         if (aItems.length !== 1) {
           return MessageBox.error(oResource.getText("MessageSelOne"));
         }
-        var NumOrdAttivo = aItems[0].getBindingContext("mManutenzione").getObject().NumOrdAttivo;
-        if (NumOrdAttivo !== "" && NumOrdAttivo !== undefined && NumOrdAttivo !== null){
+        var sItems = aItems[0].getBindingContext("mManutenzione").getObject();
+        var aFilters = [];
+        aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, sItems.IndexPmo));
+        aFilters.push(new Filter("Aufnr", FilterOperator.NE, ""));
+        var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+        if (aWO.length > 0){
           return MessageBox.error(oResource.getText("MessageOrdineAtt"));
         }
           this.getView().setModel(new JSONModel([{
             DataPian: "",
             FineCard: ""
           }]), "oModelImpostaData");
-          var oButton = oEvent.getSource(),
-            oView = this.getView();
 
+            this.byId("myPopoverImpostaData").open();
           // Create popover
-          if (!this._pInnerPopoverExternalLinks) {
+          /*if (!this._pInnerPopoverExternalLinks) {
             this._pInnerPopoverExternalLinks = Fragment.load({ id: oView.getId(), name: "PM030.APP4.fragment.PopoverImpostaData", controller: this }).then(function (oPopover) {
               oView.addDependent(oPopover);
               return oPopover;
@@ -442,7 +458,7 @@ sap.ui.define([
           this._pInnerPopoverExternalLinks.then(function (oPopover) { // INIZIALIZZO GLI INPUT
             oPopover.setModel(new JSONModel({ DataPian: "", FineCard: "" }));
             oPopover.openBy(oButton);
-          });
+          });*/
       },
       onClosePopoverImpostaData: function () {
         this.byId("myPopoverImpostaData").close();
@@ -468,13 +484,15 @@ sap.ui.define([
             }
           } else {
             // Cancellazione
-            // sIndex.FineCard = "";
+            sIndex.FineCard = null;
             sIndex.Scostamento = 0;
           } sIndex.IndexPmo = line.IndexPmo;
           var sURL = "/T_PMO(IndexPmo='" + sIndex.IndexPmo + "')";
           await this._updateHana(sURL, sIndex);
         }
         this.byId("myPopoverImpostaData").close();
+        sap.ui.core.BusyIndicator.hide(0);
+        this.onSearchResult();
       },
       /** MANAGE ODM - START */
       onSuggestSEDE: async function (oEvent) {
@@ -540,14 +558,7 @@ sap.ui.define([
         sFilter.PDat1 = oData.DataDiRiferimento;
         sFilter.PDat2 = oData.PeriodoDiSelezioneDa;
         sFilter.PDat3 = oData.PeriodoDiSelezioneA;
-        if (oData.Divisione !== undefined && oData.Divisione !== "") {
-          sFilter.SDivisioneu = [{
-            Sign: "I",
-            Option: "EQ",
-            Low: oData.Divisione,
-            High: ""
-          }];
-        }
+        sFilter.SDivisioneu = this.filterSetMulti(oData.Divisione);
         sFilter.SIndexPmo = [{
           Sign: "I",
           Option: "EQ",
@@ -721,11 +732,51 @@ sap.ui.define([
       /** MANAGE ODM - END */
 
       onAggrega: async function () {
-        debugger
         const oTable = this.byId("tbManutenzione");
         const aSelectedItems = oTable.getSelectedItems();
         if (aSelectedItems.length !== 0) {
-          
+          var vAggregatore = "",vDescAggr = "", contAggr = 0, contNOAggr = 0;
+          const aSelectedObj = this._gruopedByKey(aSelectedItems.map(s => s.getBindingContext("mManutenzione").getObject()), "NumOrdAttivo");
+            //Controlli prima di Disaggregare 
+            for (const key in aSelectedObj) {
+                const aItems = aSelectedObj[key];
+              for (var i = 0; i < aItems.length; i++) {
+            if (Number(aItems[i].Aggregatore) > 0 && vAggregatore !== aItems[i].Aggregatore.toString()){
+              contAggr = contAggr + 1;
+              vAggregatore = aItems[i].Aggregatore.toString();
+              var aFilters = [];
+              aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, aItems[i].IndexPmo));
+              aFilters.push(new Filter("Appuntam", FilterOperator.NE, aItems[i].Napp));
+              var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+              if (aWO.length > 0){
+                vDescAggr = aWO[0].DescAggregatore;
+              }
+            }
+            if (contAggr > 1){
+              return MessageBox.error(oResource.getText("MessageplusAggr"));
+            }
+            if (Number(aItems[i].Aggregatore) === 0){
+              contNOAggr = contNOAggr + 1;
+            }
+            if (aItems[i].StatoOdm !== "APER"){
+              return MessageBox.error(oResource.getText("MessageSelOrderOpen"));
+            }
+            if (aItems[i].NumOrdAttivo === "" || aItems[i].NumOrdAttivo === undefined || aItems[i].NumOrdAttivo === null){
+              return MessageBox.error(oResource.getText("MessageSelOrder"));
+            }
+          }
+        }
+          if (contNOAggr === 0 || contAggr === 0){
+            return MessageBox.error(oResource.getText("MessagenoAggr"));
+          }
+          //var aFilters = [];
+          //aFilters.push(new Filter("Aggregatore", FilterOperator.EQ, vAggregatore));
+          //var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+          //aWO[0].DescAggregatore
+
+          //Aggrega
+          this.doAggregaOrDisaggrega(aSelectedObj, "GEAG", vAggregatore, vDescAggr);
+          this.onSearchResult();
         } else {
           return MessageBox.error(oResource.getText("MessageNotSelected"));
         }
@@ -734,65 +785,52 @@ sap.ui.define([
         const oTable = this.byId("tbManutenzione");
         const aSelectedItems = oTable.getSelectedItems();
         if (aSelectedItems.length !== 0) {
-            const aSelectedObj = this._gruopedByKey(aItems.map(s => s.getBindingContext("mManutenzione").getObject()), "NumOrdAttivo");
+            const aSelectedObj = this._gruopedByKey(aSelectedItems.map(s => s.getBindingContext("mManutenzione").getObject()), "NumOrdAttivo");
             //Controlli prima di Disaggregare 
             for (const key in aSelectedObj) {
                 const aItems = aSelectedObj[key];
                 for (var i = 0; i < aItems.length; i++) {
-                    if (aSelectedObj[i].Aggregatore === "000000000000" || aSelectedObj[i].Aggregatore === undefined || aSelectedObj[i].Aggregatore === null){
+                    if (aItems[i].Aggregatore === "000000000000" || aItems[i].Aggregatore === undefined || aItems[i].Aggregatore === null){
                     return MessageBox.error(oResource.getText("MessageNotDisAggr"));
                     }
-                    if (aSelectedObj[i].StatoOdm.includes("RIL") || aSelectedObj[i].StatoOdm.includes("TECO")){
+                    if (aItems[i].StatoOdm.includes("RIL") || aItems[i].StatoOdm.includes("TECO")){
                         return MessageBox.error(oResource.getText("MessageNotDisAggr"));
                     }
                 }
           }
           //Disaggrega
-          for (i = 0; i < aSelectedObj.length; i++) {
-            var sData = await this._fillPayloadDisaggrega(aSelectedObj[i]);
-            await this._saveHana("/UpdateOrder", sData);
+          this.doAggregaOrDisaggrega(aSelectedObj, "GEOC", "", "");
 
-            var aFilters = [];
-            aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, aSelectedObj[i].IndexPmo));
-            aFilters.push(new Filter("Appuntam", FilterOperator.EQ, Number(aSelectedObj[i].Napp)));
-            var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
-            var sURL = "/" + aWO.__metadata.uri.split("/")[aWO.__metadata.uri.split("/").length - 1];
-            delete aWO.__metadata;
-            await this._updateHana(sURL, aWO);
-          }
+          sap.ui.core.BusyIndicator.hide(0);
+          this.onSearchResult();
         } else {
           return MessageBox.error(oResource.getText("MessageNotSelected"));
         }
+        sap.ui.core.BusyIndicator.hide(0);
+        return MessageBox.success(oResource.getText("MessageSuccessDisagregga"));
+      },
 
-
-
-        sap.ui.core.BusyIndicator.show(0);
-        var aItems = this.byId("tbManutenzione").getSelectedItems();
-        const aSelectedObj = this._gruopedByKey(aItems.map(s => s.getBindingContext("mManutenzione").getObject()), "NumOrdAttivo");
+      doAggregaOrDisaggrega: async function (aSelectedObj, Status, Aggregatore, DescAggregatore) {
         for (const key in aSelectedObj) {
-          if (aSelectedObj.hasOwnProperty(key)) {
-          const payload = aSelectedObj[key][0];
-
-          var sData = await this._fillPayloadRelease(payload);
-          debugger;
+          const aItems = aSelectedObj[key];
+          var sData = await this._fillPayloadUpdate(aItems[0]);
+          sData.Status = Status;
           await this._saveHana("/UpdateOrder", sData);
 
-          var aFilters = [];
-          aFilters.push(new Filter("Aufnr", FilterOperator.EQ, payload.NumOrdAttivo));
-          var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
-          for (var k = 0; k < aWO.length; k++) {
-            var sURL = "/" + aWO[k].__metadata.uri.split("/")[aWO[k].__metadata.uri.split("/").length - 1];
-            delete aWO[k].__metadata;
-            aWO[k].StatoOdm = "RIL.";
-            await this._updateHana(sURL, aWO[k]);
+          for (var i = 0; i < aItems.length; i++) {
+            var aFilters = [];
+            aFilters.push(new Filter("Aufnr", FilterOperator.EQ, aItems[i].NumOrdAttivo));
+            var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+            for (var k = 0; k < aWO.length; k++) {
+              var sURL = "/" + aWO[k].__metadata.uri.split("/")[aWO[k].__metadata.uri.split("/").length - 1];
+              delete aWO[k].__metadata;
+              aWO[k].Aggregatore = Aggregatore;
+              aWO[k].DescAggregatore = DescAggregatore;
+              await this._updateHana(sURL, aWO[k]);
           }
         }
       }
-        sap.ui.core.BusyIndicator.hide(0);
-        this.onSearchResult();
-        return MessageBox.success(oResource.getText("MessageSuccessRelease"));
-      },
-
+    },
       onCreaODM: async function () {
         const oTable = this.byId("tbManutenzione");
         const dialogAggregatore = this.byId("popAggregatore");
@@ -948,7 +986,6 @@ sap.ui.define([
           const payload = aSelectedObj[key][0];
 
           var sData = await this._fillPayloadRelease(payload);
-          debugger;
           await this._saveHana("/UpdateOrder", sData);
 
           var aFilters = [];
@@ -1112,7 +1149,6 @@ sap.ui.define([
 
             // Salva la riga sull APP_WO     
             aAPP_WO = _.sortBy(aAPP_WO, "Appuntam");
-            debugger
             for (i = 0; i < aAPP_WO.length; i++) {
               aAPP_WO[i].Aufnr = result.OrderNumber,
               await this._saveHana("/T_APP_WO", aAPP_WO[i]);
@@ -1132,7 +1168,11 @@ sap.ui.define([
         return MessageBox.success(oResource.getText("MessageSuccessCreate"));
       },
       _fillPayloadInsert: async function (sItems) {
-        const payloadInsert = {
+        const payloadInsert = await this._fillPayload(sItems);
+        return payloadInsert;
+      },
+      _fillPayload: async function (sItems) {
+        let payload = {
           NotificationID: "",
           OrderNumber: "",
           Status: "",
@@ -1151,9 +1191,6 @@ sap.ui.define([
           MantActivityType: sItems.TipoAttivita, // "AC", // Tipo Attività PM
           ProcessingGrp: "00",
           Priority: sItems.Priorita, // "3", // Priorità
-          UserCreator: "",
-          DateCreation: "",
-          TimeCreation: "",
           OperationListSet: [],
           // expands
           ErrorMessagesSet: [],
@@ -1162,213 +1199,27 @@ sap.ui.define([
           // TextCreateOrderSet: []
           //TUserStatusSet: []
         };
-        payloadInsert.Description = sItems.Impianto + " " + (sItems.StComponente.split("-")[2] === undefined ? "" :  sItems.StComponente.split("-")[2]);
+
+        payload.Description = sItems.Impianto + " " + (sItems.StComponente.split("-")[2] === undefined ? "" :  sItems.StComponente.split("-")[2]);
         var aFilters = [];
         aFilters.push(new Filter("Spras", FilterOperator.EQ, "IT"));
         aFilters.push(new Filter("Ilart", FilterOperator.EQ, sItems.TipoAttivita));
         var aATTPM = await this._fetchDataNoError("/T_ATTPM", aFilters);
         if (aATTPM.length > 0){
-          payloadInsert.Description = payloadInsert.Description + " " + aATTPM[0].Ilatx;
+          payload.Description = payload.Description + " " + aATTPM[0].Ilatx;
         }
-
-        return payloadInsert;
-
-        // var line = {
-        //   NotificationID: "",
-        //   Status: "",
-        //   OrderNumber: "",
-        //   EquipmentID: sItems.EquipmentCompo,
-        //   OrderType: sItems.TipoOrdine,
-        //   FunctionalLocation: sItems.StComponente,
-        //   PlannerGroup: "",
-        //   MaintPlanningPlant: sItems.Divisionec,
-        //   Description: sItems.DesBreve,
-        //   StartDate: this.formatDate(sItems.InizioVal), //string
-        //   FinishDate: this.formatDate(sItems.FineVal), //string
-        //   MaintPlant: sItems.Divisionec,
-        //   Plant: sItems.Divisionec,
-        //   MainWorkCenter: "",
-        //   MantActivityType: sItems.TipoAttivita,
-        //   ProcessingGrp: "00",
-        //   RequiredStartTime: "",
-        //   RequiredEndTime: "",
-        //   UserCreator: "",
-        //   DateCreation: "",
-        //   TimeCreation: "",
-        //   Priority: sItems.Priorita,
-        //   UserPartner: "",
-        //   SystCondition: "0",
-        //   ZGPSCoord: "",
-        //   SubnetwrkOprtn: "",
-        //   ActivityNumber: "",
-        //   WbsElem: "",
-        //   Revision: "",
-        //   OperationListSet: []
-        // };
-        // var opNumber = 10;
-        // if (sItems.Steus !== "") {
-        //   line.OperationListSet.push({
-        //     OperationNumber: opNumber.toString().padStart(4, "0"),
-        //     ControlKey: sItems.Steus,
-        //     WorkCenter: sItems.Cdl,
-        //     Plant: sItems.Divisionec,
-        //     Description: "",
-        //     Quantity: "0",
-        //     Price: "0",
-        //     WorkActivity: sItems.Lstar,
-        //     NormalDuration: "",
-        //     WorkUnit: "H",
-        //     StartCons: "",
-        //     StartTimeCons: "",
-        //     FinConstr: "",
-        //     FinTimeCons: "",
-        //     ConstraintStart: "",
-        //     ConstraintFinich: ""
-        //   });
-        // }
-        // if (sItems.Steus1 !== "") {
-        //   opNumber = opNumber + 10;
-        //   line.OperationListSet.push({
-        //     OperationNumber: opNumber.toString().padStart(4, "0"),
-        //     ControlKey: sItems.Steus1,
-        //     WorkCenter: sItems.Cdl1,
-        //     Plant: sItems.Divisionec,
-        //     Description: "",
-        //     Quantity: "0",
-        //     Price: "0",
-        //     WorkActivity: sItems.Lstar1,
-        //     NormalDuration: "",
-        //     WorkUnit: "H",
-        //     StartCons: "",
-        //     StartTimeCons: "",
-        //     FinConstr: "",
-        //     FinTimeCons: "",
-        //     ConstraintStart: "",
-        //     ConstraintFinich: ""
-        //   });
-        // }
-        // if (sItems.Steus2 !== "") {
-        //   opNumber = opNumber + 10;
-        //   line.OperationListSet.push({
-        //     OperationNumber: opNumber.toString().padStart(4, "0"),
-        //     ControlKey: sItems.Steus2,
-        //     WorkCenter: sItems.Cdl2,
-        //     Plant: sItems.Divisionec,
-        //     Description: "",
-        //     Quantity: "0",
-        //     Price: "0",
-        //     WorkActivity: sItems.Lstar2,
-        //     NormalDuration: "",
-        //     WorkUnit: "H",
-        //     StartCons: "",
-        //     StartTimeCons: "",
-        //     FinConstr: "",
-        //     FinTimeCons: "",
-        //     ConstraintStart: "",
-        //     ConstraintFinich: ""
-        //   });
-        // }
-        // if (sItems.Steus3 !== "") {
-        //   opNumber = opNumber + 10;
-        //   line.OperationListSet.push({
-        //     OperationNumber: opNumber.toString().padStart(4, "0"),
-        //     ControlKey: sItems.Steus3,
-        //     WorkCenter: sItems.Cdl3,
-        //     Plant: sItems.Divisionec,
-        //     Description: "",
-        //     Quantity: "0",
-        //     Price: "0",
-        //     WorkActivity: sItems.Lstar3,
-        //     NormalDuration: "",
-        //     WorkUnit: "H",
-        //     StartCons: "",
-        //     StartTimeCons: "",
-        //     FinConstr: "",
-        //     FinTimeCons: "",
-        //     ConstraintStart: "",
-        //     ConstraintFinich: ""
-        //   });
-        // }
-        // if (sItems.Steus4 !== "") {
-        //   opNumber = opNumber + 10;
-        //   line.OperationListSet.push({
-        //     OperationNumber: opNumber.toString().padStart(4, "0"),
-        //     ControlKey: sItems.Steus4,
-        //     WorkCenter: sItems.Cdl4,
-        //     Plant: sItems.Divisionec,
-        //     Description: "",
-        //     Quantity: "0",
-        //     Price: "0",
-        //     WorkActivity: sItems.Lstar4,
-        //     NormalDuration: "",
-        //     WorkUnit: "H",
-        //     StartCons: "",
-        //     StartTimeCons: "",
-        //     FinConstr: "",
-        //     FinTimeCons: "",
-        //     ConstraintStart: "",
-        //     ConstraintFinich: ""
-        //   });
-        // }
-        // if (sItems.Steus5 !== "") {
-        //   opNumber = opNumber + 10;
-        //   line.OperationListSet.push({
-        //     OperationNumber: opNumber.toString().padStart(4, "0"),
-        //     ControlKey: sItems.Steus5,
-        //     WorkCenter: sItems.Cdl5,
-        //     Plant: sItems.Divisionec,
-        //     Description: "",
-        //     Quantity: "0",
-        //     Price: "0",
-        //     WorkActivity: sItems.Lstar5,
-        //     NormalDuration: "",
-        //     WorkUnit: "H",
-        //     StartCons: "",
-        //     StartTimeCons: "",
-        //     FinConstr: "",
-        //     FinTimeCons: "",
-        //     ConstraintStart: "",
-        //     ConstraintFinich: ""
-        //   });
-        // }
-        // return line;
-
+        return payload;
       },
-      _fillPayloadRelease: async function (sItems, aWO) {
-        const payloadUpdate = {
-          SystemStatus: "RELEASE",
-          UserPartner: "",
-          UserPartnerOld: "",
-          NotificationID: "",
-          OrderNumber: sItems.NumOrdAttivo,
-          Status: "",
-          EquipmentID: "",
-          OrderType: sItems.TipoOrdine, // "M4", // TipoOrdine
-          SystCondition: sItems.Indisponibilita, // "0", // Indisponibilita
-          FunctionalLocation: sItems.StComponente, // "ITW-ITWI-A1-01", // Sede Tecnica
-          PlannerGroup: "",
-          MaintPlanningPlant: "",
-          Description: "SHORT 1", // Sembra un concatena tra estrazione di "impianto" e Tipo Attività PM, però a volte prende la descrizione del terzo livello della Sede Tecnica e la Descrizione Azione PMO (da controllare a codice)
-          StartDate: this.formatDate(sItems.Datpia), // "20190314", // Data Pianificazione
-          FinishDate: this.formatDate(sItems.Datpia), //"20190314", // Data Pianificazione
-          MaintPlant: "",
-          Plant: "",
-          MainWorkCenter: "",
-          MantActivityType: sItems.TipoAttivita, // "AC", // Tipo Attività PM
-          ProcessingGrp: "00",
-          Priority: sItems.Priorita, // "3", // Priorità
-          OperationListSet: [],
-          // expands
-          ErrorMessagesSet: [],
-          // ObjectListSet: [],
-          // OrderDetailsSet: [],
-          // TUserStatusSet: [],
-          // TextCreateOrderSet: []
-        };
+      _fillPayloadRelease: async function (sItems) {
+
+        const payloadUpdate = await this._fillPayload(sItems);
+        payloadUpdate.SystemStatus = "RELEASE";
+        payloadUpdate.OrderNumber = sItems.NumOrdAttivo;
+
         const sFilter = {
           "DateIn": "19700101",
           "DateFi": "99991231",
-          "OrderNumber": "210000004253",
+          "OrderNumber": sItems.NumOrdAttivo,
           "GetOperationListSet": []
         };
         var aOperation = await this._saveHana("/GetOrder", sFilter);
@@ -1389,52 +1240,38 @@ sap.ui.define([
         }
         return payloadUpdate;
       },
-      _fillPayloadUpdate: async function (sItems, aWO) {
-        const payloadUpdate = {
-          SystemStatus: "RELEASE",
-          UserPartner: "",
-          UserPartnerOld: "",
-          NotificationID: "",
-          OrderNumber: sItems.NumOrdAttivo,
-          Status: "",
-          EquipmentID: "",
-          OrderType: sItems.TipoOrdine, // "M4", // TipoOrdine
-          SystCondition: sItems.Indisponibilita, // "0", // Indisponibilita
-          FunctionalLocation: sItems.StComponente, // "ITW-ITWI-A1-01", // Sede Tecnica
-          PlannerGroup: "",
-          MaintPlanningPlant: "",
-          Description: "SHORT 1", // Sembra un concatena tra estrazione di "impianto" e Tipo Attività PM, però a volte prende la descrizione del terzo livello della Sede Tecnica e la Descrizione Azione PMO (da controllare a codice)
-          StartDate: this.formatDate(sItems.Datpia), // "20190314", // Data Pianificazione
-          FinishDate: this.formatDate(sItems.Datpia), //"20190314", // Data Pianificazione
-          MaintPlant: "",
-          Plant: "",
-          MainWorkCenter: "",
-          MantActivityType: sItems.TipoAttivita, // "AC", // Tipo Attività PM
-          ProcessingGrp: "00",
-          Priority: sItems.Priorita, // "3", // Priorità
-          OperationListSet: [],
-          // expands
-          ErrorMessagesSet: [],
-          // ObjectListSet: [],
-          // OrderDetailsSet: [],
-          // TUserStatusSet: [],
-          // TextCreateOrderSet: []
+      _fillPayloadUpdate: async function (sItems) {
+        const payloadUpdate = await this._fillPayload(sItems);
+        payloadUpdate.OrderNumber = sItems.NumOrdAttivo;
+
+        const sFilter = {
+          "DateIn": "19700101",
+          "DateFi": "99991231",
+          "OrderNumber": sItems.NumOrdAttivo,
+          "GetOperationListSet": [],
+          "OrderHeaderSet": []
         };
-        for (let index = 0; index < 6; index++) {
-          if (sItems[`Lstar${index || ""}`] !== ""){
-          payloadUpdate.OperationListSet.push({
-            OperationNumber: `${Number(aWO[0][`Aplzl${index || ""}`])}0`.toString().padStart(4, "0"), // "0010", // 0010, 0020, 0030 ecc
-            ControlKey: sItems[`Steus${index || ""}`], // "", //"PM01", // Steus, Steus1, Steus2, Steus3, Steus4, Steus5
-            WorkCenter: sItems[`Cdl${index || ""}`], // "I_MM5", // Cdl, Cdl1, Cdl2, Cdl3, Cdl4, Cdl5
-            Plant: sItems.Divisionec, // Divisionec
-            Description: "", // ? 
-            Quantity: "0", // Persone, Persone1, Persone2, Persone3, Persone4, Persone5
-            Price: "0", // Num, Num1, Num2, Num3, Num4, Num5
-            WorkActivity: "0", // "", // Lstar, Lstar1, Lstar2, Lstar3, Lstar4, Lstar5
-            NormalDuration: sItems[`Hper${index || ""}`].toString(), // "0", // Hper, Hper1, Hper2, Hper3, Hper4, Hper5
-            WorkUnit: sItems.Daune // "H" // Daune
-          });
+
+        var aOperation = await this._saveHana("/GetOrder", sFilter);
+        if (aOperation.OrderHeaderSet.results.length > 0){
+          this.Status = aOperation.OrderHeaderSet.results[0].ObjectStatus;
+        } else {
+          this.Status = "";
         }
+        aOperation = aOperation.GetOperationListSet.results;
+        for (var i = 0; aOperation.length > i; i++) {
+          payloadUpdate.OperationListSet.push({
+            OperationNumber: aOperation[i].OperationNumber,
+            ControlKey: aOperation[i].ControlKey,
+            WorkCenter: aOperation[i].WorkCenter,
+            Plant: aOperation[i].Plant,
+            Description: aOperation[i].Description,
+            Quantity: aOperation[i].Quantity,
+            Price: aOperation[i].Price,
+            WorkActivity: aOperation[i].WorkActivity,
+            NormalDuration: aOperation[i].NormalDuration,
+            WorkUnit: aOperation[i].WorkUnit
+          });
         }
         return payloadUpdate;
       },
@@ -1445,7 +1282,7 @@ sap.ui.define([
       onCloseAgg: function () {
         this.byId("popAggregatore").close();
       },
-      onCancellaData: function () {
+      onCancellaData: async function () {
 
         var aItems = this.byId("tbManutenzione").getSelectedItems();
         if (aItems.length === 0) {
@@ -1454,10 +1291,13 @@ sap.ui.define([
         /*if (aItems.length !== 1) {
           return MessageBox.error(oResource.getText("MessageSelOne"));
         }*/
-
         const aSelectedObj = aItems.map((e) => e.getBindingContext("mManutenzione").getObject());
         for (var i = 0; i < aSelectedObj.length; i++) {
-          if (aSelectedObj[i].NumOrdAttivo !== "" && aSelectedObj[i].NumOrdAttivo !== undefined && aSelectedObj[i].NumOrdAttivo !== null){
+          var aFilters = [];
+          aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, aSelectedObj[i].IndexPmo));
+          aFilters.push(new Filter("Aufnr", FilterOperator.NE, ""));
+          var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+          if (aWO.length > 0){
             return MessageBox.error(oResource.getText("MessageOrdineAtt"));
           }
             if ((aSelectedObj[i].Scostamento === 0 || aSelectedObj[i].Scostamento === "0" || aSelectedObj[i].Scostamento === undefined)
