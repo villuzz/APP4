@@ -9,8 +9,9 @@
 					  <Title text="{i18n>TitoloOdm}" wrapping="true" class="titleText" />
 					</f:heading>
 					<f:navigationActions>
-                        <Link href="https://www.w3.org/WAI/eval/report-tool/" target="_blank" text="{i18n>accessibility}" class="sapUiTinyMarginEnd" ariaLabelledBy="LinkAccessibility" ariaDescribedBy="LinkAccessibility" />
-						<Button icon="sap-icon://action-settings" press="onPersoButtonPressed" class="sapUiTinyMarginBegin" tooltip="setting" ariaLabelledBy="setting" ariaDescribedBy="settingAction"/>
+              <!--<Link href="https://www.w3.org/WAI/eval/report-tool/" target="_blank" text="{i18n>accessibility}" />-->
+						  <Button text="{i18n>accessibility}" press="accesibilityLink" />
+              <Button icon="sap-icon://action-settings" press="onPersoButtonPressed" class="sapUiTinyMarginBegin" tooltip="setting" ariaLabelledBy="setting" ariaDescribedBy="settingAction"/>
 					    <Button icon="sap-icon://download" press="onDataExport" class="sapUiTinyMarginBegin" tooltip="download" ariaLabelledBy="download" ariaDescribedBy="downloadAction"/>
 					</f:navigationActions>
 				</f:DynamicPageTitle>

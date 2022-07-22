@@ -345,6 +345,10 @@ sap.ui.define([
             }
           });
         });
+      },
+      accesibilityLink: function () {
+        var sRootPath = jQuery.sap.getModulePath("PM030.APP4");
+        window.open(sRootPath + "/file/newpm030-app4-ordini-di-manutenzione-report.html");
       }
     });
   });
