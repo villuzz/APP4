@@ -426,29 +426,81 @@ sap.ui.define([
       onCloseTestoView: function () {
         this.byId("popTestoView").close();
       },
-      onImpostaData: async function (oEvent) {
+      onCancellaData: async function () {
+
         var aItems = this.byId("tbManutenzione").getSelectedItems();
         if (aItems.length === 0) {
           return MessageBox.error(oResource.getText("MessageNotSelected"));
         }
-        if (aItems.length !== 1) {
+        /*if (aItems.length !== 1) {
+          return MessageBox.error(oResource.getText("MessageSelOne"));
+        }*/
+        const aSelectedObj = aItems.map((e) => e.getBindingContext("mManutenzione").getObject());
+        for (var i = 0; i < aSelectedObj.length; i++) {
+          //var aFilters = [];
+          //aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, aSelectedObj[i].IndexPmo));
+          //aFilters.push(new Filter("Aufnr", FilterOperator.NE, ""));
+          //var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+          //if (aWO.length > 0) {
+          //  return MessageBox.error(oResource.getText("MessageOrdineAtt"));
+          //}
+          if (aSelectedObj[i].NumOrdAttivo !== undefined && aSelectedObj[i].NumOrdAttivo !== null && aSelectedObj[i].NumOrdAttivo !== ""){
+            return MessageBox.error(oResource.getText("MessageOrdineAtt"));
+          }
+          /*
+          var aFilters = [];
+          aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, aSelectedObj[i].IndexPmo));
+          aFilters.push(new Filter("Aufnr", FilterOperator.EQ, ""));
+          aFilters.push(new Filter("Appuntam", FilterOperator.LT, aSelectedObj[i].Napp));
+          var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+          if (aWO.length > 0) {
+            return MessageBox.error(oResource.getText("MessageNotFirstApp"));
+          }*/
+          if (!this.checkORDPre(aSelectedObj[i])){
+            return MessageBox.error(oResource.getText("MessageNotFirstApp"));
+          }
+
+          if ((aSelectedObj[i].Scostamento === 0 || aSelectedObj[i].Scostamento === "0" || aSelectedObj[i].Scostamento === undefined)
+            && (aSelectedObj[i].FineCard === "" || aSelectedObj[i].FineCard === null || aSelectedObj[i].FineCard === undefined)) {
+            return MessageBox.error(oResource.getText("MessageSelScosFine"));
+          }
+        }
+        MessageBox.warning(oResource.getText("MessageCancellaData"), {
+          actions: [
+            MessageBox.Action.OK, MessageBox.Action.CANCEL
+          ],
+          emphasizedAction: MessageBox.Action.OK,
+          onClose: function (sAction) {
+            if (sAction === MessageBox.Action.OK) {
+              this.onSalvaImpostaData("X");
+            }
+          }.bind(this)
+        });
+
+      },
+      onImpostaData: async function (oEvent) {
+        var aSelItems = this.byId("tbManutenzione").getSelectedItems();
+
+        if (aSelItems.length === 0) {
+          return MessageBox.error(oResource.getText("MessageNotSelected"));
+        }
+        if (aSelItems.length !== 1) {
           return MessageBox.error(oResource.getText("MessageSelOne"));
         }
-        var sItems = aItems[0].getBindingContext("mManutenzione").getObject();
-        var aFilters = [];
-        aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, sItems.IndexPmo));
-        aFilters.push(new Filter("Aufnr", FilterOperator.NE, ""));
-        var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
-        if (aWO.length > 0) {
+        var sSelItems = aSelItems[0].getBindingContext("mManutenzione").getObject();
+
+        if (sSelItems.NumOrdAttivo !== undefined && sSelItems.NumOrdAttivo !== null && sSelItems.NumOrdAttivo !== ""){
           return MessageBox.error(oResource.getText("MessageOrdineAtt"));
         }
-
-        aFilters = [];
-        aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, sItems.IndexPmo));
+        /*var aFilters = [];
+        aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, sSelItems.IndexPmo));
         aFilters.push(new Filter("Aufnr", FilterOperator.EQ, ""));
-        aFilters.push(new Filter("Appuntam", FilterOperator.LT, sItems.Napp));
-        aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
+        aFilters.push(new Filter("Appuntam", FilterOperator.LT, sSelItems.Napp));
+        var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
         if (aWO.length > 0) {
+          return MessageBox.error(oResource.getText("MessageNotFirstApp"));
+        }*/
+        if (!this.checkORDPre(sSelItems)){
           return MessageBox.error(oResource.getText("MessageNotFirstApp"));
         }
 
@@ -469,6 +521,34 @@ sap.ui.define([
           oPopover.setModel(new JSONModel({ DataPian: "", FineCard: "" }));
           oPopover.openBy(oButton);
         });*/
+      },
+
+      checkORDPre: function (sSelItems){
+        var aItems = this.byId("tbManutenzione").getItems();
+        aItems = aItems.map((e) => e.getBindingContext("mManutenzione").getObject());
+
+        var aGroupByKey = this._gruopedByKey(aItems, "IndexPmo");
+        for (var key in aGroupByKey) {
+          if (aGroupByKey.hasOwnProperty(key)) {
+            if (key === sSelItems.IndexPmo) {
+            var aItemsKey = aGroupByKey[key];
+              aItemsKey = _.sortBy(aItemsKey, "Napp");
+              if (aItemsKey[0].Napp !== sSelItems.Napp){
+                var numOrd = "";
+                for (var i = 0; i < aItemsKey.length; i++) {
+                  if (aItemsKey[i].Napp === sSelItems.Napp){
+                    numOrd = aItemsKey[i - 1].NumOrdAttivo;
+                    continue;
+                  }
+                }
+                if (numOrd === undefined || numOrd === null || numOrd === ""){
+                  return false;
+                }
+              }
+            }
+          }
+        }
+        return true;
       },
       onClosePopoverImpostaData: function () {
         this.byId("myPopoverImpostaData").close();
@@ -1292,52 +1372,7 @@ sap.ui.define([
       onCloseAgg: function () {
         this.byId("popAggregatore").close();
       },
-      onCancellaData: async function () {
-
-        var aItems = this.byId("tbManutenzione").getSelectedItems();
-        if (aItems.length === 0) {
-          return MessageBox.error(oResource.getText("MessageNotSelected"));
-        }
-        /*if (aItems.length !== 1) {
-          return MessageBox.error(oResource.getText("MessageSelOne"));
-        }*/
-        const aSelectedObj = aItems.map((e) => e.getBindingContext("mManutenzione").getObject());
-        for (var i = 0; i < aSelectedObj.length; i++) {
-          var aFilters = [];
-          aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, aSelectedObj[i].IndexPmo));
-          aFilters.push(new Filter("Aufnr", FilterOperator.NE, ""));
-          var aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
-          if (aWO.length > 0) {
-            return MessageBox.error(oResource.getText("MessageOrdineAtt"));
-          }
-
-          aFilters = [];
-          aFilters.push(new Filter("IndexOdm", FilterOperator.EQ, aSelectedObj[i].IndexPmo));
-          aFilters.push(new Filter("Aufnr", FilterOperator.EQ, ""));
-          aFilters.push(new Filter("Appuntam", FilterOperator.LT, aSelectedObj[i].Napp));
-          aWO = await this._fetchDataNoError("/T_APP_WO", aFilters);
-          if (aWO.length > 0) {
-            return MessageBox.error(oResource.getText("MessageNotFirstApp"));
-          }
-
-          if ((aSelectedObj[i].Scostamento === 0 || aSelectedObj[i].Scostamento === "0" || aSelectedObj[i].Scostamento === undefined)
-            && (aSelectedObj[i].FineCard === "" || aSelectedObj[i].FineCard === null || aSelectedObj[i].FineCard === undefined)) {
-            return MessageBox.error(oResource.getText("MessageSelScosFine"));
-          }
-        }
-        MessageBox.warning(oResource.getText("MessageCancellaData"), {
-          actions: [
-            MessageBox.Action.OK, MessageBox.Action.CANCEL
-          ],
-          emphasizedAction: MessageBox.Action.OK,
-          onClose: function (sAction) {
-            if (sAction === MessageBox.Action.OK) {
-              this.onSalvaImpostaData("X");
-            }
-          }.bind(this)
-        });
-
-      },
+      
       onReleaseODM: async function () {
         var oTable = this.byId("tbManutenzione");
         var aSelectedItems = oTable.getSelectedItems();

@@ -62,7 +62,88 @@ sap.ui.define([
       getResourceBundle: function () {
         return this.getOwnerComponent().getModel("i18n").getResourceBundle();
       },
+      onListVariant: function () {
+        var aFilters = [];
+        aFilters.push(new Filter("APP", FilterOperator.EQ, "1"));
+        aFilters.push(new Filter("TABLE", FilterOperator.EQ, this._oTPC.getTable().split("-").pop()));
 
+        this.byId("tableVariant").getBinding("items").filter(aFilters);
+        this.byId("DialogVariantList").open();
+    },
+    onPressVariant: function () {
+        this.getView().byId("VariantName").setValue("");
+        this.byId("DialogVariant").open();
+    },
+    onSaveVariant: async function () {
+        if (this.getView().byId("VariantName").getValue() === "") {
+            MessageToast.show("Inserire un Nome");
+        } else {
+
+            var vColumn = [],
+                vFilter = {};
+            var aSel = this._oTPC._oPersonalizations.aColumns;
+            if (aSel.length > 0) {
+                for (var i = 0; i < aSel.length; i++) {
+                    vColumn.push(aSel[i].visible);
+                }
+            } else {
+                aSel = this.getView().byId(this._oTPC.getTable().split("-").pop()).getColumns();
+                for (var i = 0; i < aSel.length; i++) {
+                    vColumn.push(aSel[i].getVisible());
+                }
+            } vColumn = JSON.stringify(vColumn);
+            vFilter = JSON.stringify(this.getView().getModel("sFilter").getData());
+            var sVariant = {
+                APP: "1",
+                TABLE: this._oTPC.getTable().split("-").pop(),
+                USER: "Test",
+                NAME: this.getView().byId("VariantName").getValue(),
+                COLUMN: vColumn,
+                FILTER: vFilter
+            };
+            await this._saveHana("/Variante", sVariant);
+            this.byId("DialogVariant").close();
+        }
+    },
+    onCloseVariant: function () {
+        this.byId("DialogVariant").close();
+    },
+    onDeleteVariantList: async function (oEvent) {
+        sap.ui.core.BusyIndicator.show();
+        var line = oEvent.getSource().getBindingContext().getObject();
+        var sURL = "/Variante(" + "APP=" + "'" + line.APP + "'," + "TABLE=" + "'" + line.TABLE + "'," + "USER=" + "'" + line.USER + "'," + "NAME=" + "'" + line.NAME + "'" + ")";
+
+        await this._removeHana(sURL);
+        sap.ui.core.BusyIndicator.hide();
+    },
+    onVariantPress: function (oEvent) {
+        var line = oEvent.getSource().getBindingContext().getObject();
+
+        var _oTPC = this._oTPC._oPersonalizations.aColumns;
+        var table = this.getView().byId(this._oTPC.getTable().split("-").pop()).getColumns();
+        var aSel = JSON.parse(line.COLUMN);
+        for (var i = 0; i < aSel.length; i++) {
+            if (_oTPC.length > 0) {
+                _oTPC[i].visible = aSel[i];
+            } else {
+                table[i].setVisible(aSel[i]);
+            }
+        }
+        var aFilter = JSON.parse(line.FILTER);
+        aFilter.DataDiRiferimento = new Date(aFilter.DataDiRiferimento);
+        aFilter.PeriodoDiSelezioneA = new Date(aFilter.PeriodoDiSelezioneA);
+        aFilter.PeriodoDiSelezioneDa = new Date(aFilter.PeriodoDiSelezioneDa);
+        this.getView().getModel("sFilter").setData(aFilter);
+        this._oTPC.refresh();
+        this.getView().byId(this._oTPC.getTable().split("-").pop()).getModel().refresh();
+
+        this.onSearchFilters();
+
+        this.byId("DialogVariantList").close();
+    },
+    onCloseVariantList: function () {
+        this.byId("DialogVariantList").close();
+    },
       /**
            * Method for navigation to specific view
            * @public
